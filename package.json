@@ -1,0 +1,25 @@
+{
+  "name": "tri-arbitrage",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dudelis/tri-arbitrage.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/dudelis/tri-arbitrage/issues"
+  },
+  "homepage": "https://github.com/dudelis/tri-arbitrage#readme",
+  "dependencies": {
+    "ccxt": "^1.10.1138",
+    "express": "^4.16.2",
+    "mongodb": "^3.0.2",
+    "mongoose": "^5.0.6"
+  }
+}
