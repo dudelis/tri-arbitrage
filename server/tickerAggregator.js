@@ -14,7 +14,7 @@ let _initializedExchanges = {};
 const startAggregator = async()=>{
     await _initExchanges(); //Initializes all the exchanges
     await _fetchTickers();
-    _timerId = setTimeout(_recursiveJob, _interval); //Starting regular sync
+    _timerId = setTimeout(_recursiveFetchTimout, _interval); //Starting regular sync
 }
 
 const _initExchanges = async()=>{
@@ -40,26 +40,24 @@ const _initExchange = async(ccxt_id)=>{
 }
 
 const _fetchTickers = async()=>{
+    let createdAt = new Date().getTime();
     let includedExchanges = await Exchange.find({includeIntoQuery: true});
     for (let iExchange of includedExchanges){
         let exchangeInstance = await _initExchange(iExchange.ccxt_id);
         for (let symbol of iExchange.symbols){
             let ticker = await exchangeInstance.fetchTicker(symbol);
-            var itemBody = _.pick(ticker, ['symbol', 'timestamp','high', 'low', 'bid', 'ask', 'vwap', 'last', 'baseVolume']);
+            let itemBody = _.pick(ticker, ['symbol', 'timestamp','high', 'low', 'bid', 'ask', 'vwap', 'last', 'baseVolume']);
             itemBody._exchange = iExchange._id;
-            var item = new Ticker(itemBody);
+            itemBody.createdAt = createdAt;
+            const item = new Ticker(itemBody);
             await item.save();
         }        
     }
 }
 
-const _recursiveJob = async()=>{
+const _recursiveFetchTimout = async()=>{
     await _fetchTickers();
     _timerId = setTimeout(_recursiveJob, _interval);
-}
-
-const _startFetchTickersJob = ()=>{
-    
 }
 
 module.exports = {startAggregator}
