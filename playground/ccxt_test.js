@@ -4,6 +4,17 @@
 
 const ccxt = require('ccxt');
 
+// var kraken = ccxt.kraken();
+// console.log(kraken.name);
+// kraken.name = 'hello';
+// console.log(kraken.name);
+// var kraken1 = new ccxt.kraken();
+// console.log(kraken1.name);
+
+// console.log(ccxt)
+
+
+
 
 
 // (async ()=>{
@@ -20,12 +31,12 @@ const ccxt = require('ccxt');
 //     let ticker = await bitstamp.fetchTicker('BTC/USD');
 //     console.log(bitstamp.id, ticker)
 // })()
-var exchangeName = 'bitcoincoid';
+var exchangeName = 'bl3p';
 
 (async ()=>{
     let exchange = new ccxt[exchangeName]();
-    let markets = await exchange.load_markets();
+    //let markets = await exchange.load_markets();
     //console.log(markets);
-    let ticker = await exchange.fetchTicker('BTC/IDR');
-    console.log(exchange.id, ticker);
+    let ticker = await exchange.fetchTicker('BTC/EUR');
+    console.log(JSON.stringify(ticker, undefined, 2));
 })()
