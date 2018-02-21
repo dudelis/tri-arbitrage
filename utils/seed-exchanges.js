@@ -5,7 +5,7 @@
 const {ObjectID} = require('mongodb');
 
 const {Exchange} = require('./../models/exchange');
-const config = require('./../../config');
+
 
 const exchanges = [{
     name: 'ACX',
@@ -43,20 +43,20 @@ const exchanges = [{
     localCurrency: 'IDR',
     includeIntoQuery: true,
     symbols:['BTC/IDR']
-}]
+}];
 
+// (function(){
+//     console.log(exchanges);
+// })();
 
-const populateExchanges = async()=>{
+const populate = async() =>{
     try{
         var foundExchanges = await Exchange.find();
         if (!foundExchanges || foundExchanges.length ===0){
             await Exchange.insertMany(exchanges);
-            return exchanges;
-        } else{
-            return foundExchanges;
-    }}catch(e){
+        }
+    }catch(e){
         console.log(e);
     }
-}
-
-module.exports = {populateExchanges, exchanges}
+};
+module.exports = {populate}

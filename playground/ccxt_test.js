@@ -31,12 +31,13 @@ const ccxt = require('ccxt');
 //     let ticker = await bitstamp.fetchTicker('BTC/USD');
 //     console.log(bitstamp.id, ticker)
 // })()
-var exchangeName = 'bl3p';
+var exchangeName = 'acx';
 
 (async ()=>{
     let exchange = new ccxt[exchangeName]();
     //let markets = await exchange.load_markets();
     //console.log(markets);
-    let ticker = await exchange.fetchTicker('BTC/EUR');
-    console.log(JSON.stringify(ticker, undefined, 2));
+    let ticker = await exchange.fetchOrderBook('BTC/AUD');
+    console.log(ticker);
+    console.log(ticker.asks.length, '     ', ticker.bids.length);
 })()
