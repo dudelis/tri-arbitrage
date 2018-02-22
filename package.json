@@ -18,6 +18,7 @@
   "homepage": "https://github.com/dudelis/tri-arbitrage#readme",
   "dependencies": {
     "async": "^2.6.0",
+    "body-parser": "^1.18.2",
     "ccxt": "^1.10.1138",
     "express": "^4.16.2",
     "lodash": "^4.17.5",

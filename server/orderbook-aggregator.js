@@ -73,7 +73,7 @@ const _fetchOrderBook = async(exchange, symbol, createdAt)=>{
 }
 
 const _startJob = async()=>{
-    await queryExchanges();
+    queryExchanges();
     _timerId = setTimeout(_startJob, _interval);
 }
 

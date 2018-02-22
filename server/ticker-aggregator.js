@@ -21,6 +21,7 @@ const {Ticker} = require('../models/ticker');
 const exchangeInitializer = require('./exchange-initializer');
 
 const moduleName = 'Ticker aggregator';
+let _isRunning = true;
 let _interval = process.env.QUERY_INTERVAL;
 let _initializedExchanges = {};
 let _delay = 2000; //delay for querying 1 exchange for various symbols
@@ -36,6 +37,7 @@ const setInterval = (num) =>{
 }
 const start = async()=>{
     try{
+        _isRunning = true;
         _startJob();
         logger.info('Sync job was started!', {moduleName});
     } catch(e){
@@ -47,6 +49,7 @@ const stop = () =>{
         clearTimeout(_timeoutId);
         logger.info(`Sync job was stopped`, {moduleName});
     }
+    _isRunning = false;
 }
 
 const queryExchanges = async()=>{
@@ -86,8 +89,10 @@ const _fetchTicker = async(exchange, symbol, createdAt)=>{
 }
 
 const _startJob = async()=>{
-    await queryExchanges();
-    _timerId = setTimeout(_startJob, _interval);
+    queryExchanges();
+    if (_isRunning){
+        _timerId = setTimeout(_startJob, _interval);
+    }
 }
 
 module.exports = {start, stop, setInterval}
