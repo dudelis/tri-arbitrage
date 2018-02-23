@@ -5,22 +5,23 @@ const async = require('async');
 
 const app = require('./app');
 const logger = require('./utils/logger');
-const tickerAggregator = require('./server/ticker-aggregator');
-const orderbookAggregator = require('./server/orderbook-aggregator');
+const cryptoAggregator = require('./server/crypto-aggregator');
+const fiatAggregator = require('./server/fiat-aggregator');
 
 async.parallel([
-    function startTickerAggregator(callback){
-      tickerAggregator.start(callback);
+    function startCryptoAggregator(callback){
+      cryptoAggregator.start(callback);
     },
-    // function startOrderbookAggregator(callback){
-    //   orderbookAggregator.start(callback);
-    // },
+    function startFiatAggregator(callback){
+      fiatAggregator.start(callback);
+    },
     function log(callback){
       console.log('hello');
     },
-    function startApp(callback){
-      app.start();
-    }]
+    // function startApp(callback){
+    //   app.start();
+    // }
+  ]
     // function initializeDBConnection(callback) {
     //   require('./config/initializers/database')(callback);
     // },
