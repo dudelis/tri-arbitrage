@@ -1,19 +1,38 @@
-const app = require('express')();
-const bodyParser = require('body-parser');
+require('./config');
+require('./utils/seed-exchanges').populate();
 
+const async = require('async');
+
+const server = require('./server/server');
 const logger = require('./utils/logger');
-const {mongoose} = require('./lib/mongoose');
-const api = require('./api');
+// const cryptoAggregator = require('./server/crypto-aggregator');
+const fiatAggregator = require('./server/aggregator/fiat-aggregator');
 
-var start = function(){
-    //  Connect all our routes to our application
-    //app.use(logger);
-    app.use(bodyParser.json());
-    app.use('/api', api.router);
-
-    // Turn on that server!
-    app.listen(process.env.PORT, () => {
-    logger.info(`App listening on port ${process.env.PORT}`);
-    });
-};
-module.exports = {start};
+async.parallel([
+    // function startCryptoAggregator(callback){
+    //   cryptoAggregator.start(callback);
+    // },
+    // function startFiatAggregator(callback){
+    //   fiatAggregator.start(callback);
+    // },
+    // function log(callback){
+    //   console.log('hello');
+    // },
+    function startApp(callback){
+      server.start();
+    }
+  ]
+    // function initializeDBConnection(callback) {
+    //   require('./config/initializers/database')(callback);
+    // },
+    // function startServer(callback) {
+    //   server(callback);
+    // }]
+        // function(err) {
+    //   if (err) {
+    //     logger.error('[APP] initialization failed', err);
+    //   } else {
+    //     logger.info('[APP] initialized SUCCESSFULLY');
+    //   }
+    // }
+  );

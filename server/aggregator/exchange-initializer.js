@@ -1,8 +1,8 @@
 const ccxt = require('ccxt');
 const _ = require('lodash');
 
-const logger = require('../utils/logger');
-const {mongoose} = require('../lib/mongoose');
+const logger = require('../../utils/logger');
+const {mongoose} = require('../db/mongoose');
 const {Exchange} = require('../models/exchange');
 
 const moduleName = 'Exchange initializer';

@@ -1,7 +1,7 @@
 const _ = require('lodash');
 const axios = require('axios');
 
-const logger = require('../utils/logger');
+const logger = require('../../utils/logger');
 const {Exchange} = require('../models/exchange');
 const {Fiat} = require('../models/fiat');
 const exchangeInitializer = require('./exchange-initializer');
@@ -50,11 +50,9 @@ const syncItems = async()=>{
             const currencies = localCurrencies.join(); 
             const queryUrl = `${_baseUrl}?access_key=${process.env.FIAT_API_KEY}`;
             res = await axios.get(queryUrl);
-            console.log(typeof res.data);
             if (res.data){
                 var items = localCurrencies.map((i) =>{
                     let symbol = _base + i;
-                    console.log(symbol);
                     var item = {
                         symbol: symbol,
                         price: res.data.quotes[symbol],
@@ -63,11 +61,9 @@ const syncItems = async()=>{
                     }
                     return item;
                 });
-                console.log(items);
                 await Fiat.insertMany(items);
             }
-        }
-                     
+        }                     
         var end = new Date();
         logger.info(`Fiat currency rates were received for ${end-start} ms.`, {moduleName, start, end, duration: end - start})
     } catch(e){
@@ -81,6 +77,6 @@ const _startJob = async()=>{
     {
         _timerId = setTimeout(_startJob, _interval);
     }
-}
+};
 
 module.exports = {start, stop, setInterval}

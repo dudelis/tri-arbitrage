@@ -4,7 +4,7 @@
 
 const {ObjectID} = require('mongodb');
 
-const {Exchange} = require('./../models/exchange');
+const {Exchange} = require('../server/models/exchange');
 
 
 const exchanges = [{
