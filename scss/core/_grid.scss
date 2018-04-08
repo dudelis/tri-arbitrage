@@ -1,0 +1,11 @@
+.arbitrage-grid .react-grid-Container .react-grid-Main .react-grid-Grid .react-grid-Header .react-grid-HeaderRow .react-grid-HeaderCell{
+    background-color: $gray-200;
+}
+.arbitrage-grid .react-grid-Container .react-grid-Main .react-grid-Grid .react-grid-Canvas .react-grid-Row .react-grid-Cell:first-of-type,
+.arbitrage-grid .react-grid-Container .react-grid-Main .react-grid-Grid .react-grid-Canvas .react-grid-Row .react-grid-Cell[value="-"],{
+    background-color: $gray-200;
+    font-weight: 700; 
+}
+.arbitrage-grid .react-grid-Container .react-grid-Main .react-grid-Grid .react-grid-Canvas .react-grid-Row .react-grid-Cell[value*="-"],{
+    color: $red; 
+}

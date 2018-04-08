@@ -39,11 +39,11 @@ exchangeRouter.post('/', (req, res)=>{
     const exchange = new Exchange({
         _id: new ObjectID(),
         name: req.body.name,
-        updateInterval: req.body.updateInterval,
+        ccxt_id: req.body.ccxt_id,
         localCurrency: req.body.localCurrency,
-        apiBaseUrl: req.body.apiBaseUrl,
-        created: new Date().getTime(),
-        changed: new Date().getTime()
+        includeIntoQuery: req.body.includeIntoQuery,
+        createdAt: new Date().getTime(),
+        updatedAt: new Date().getTime()
     });
     exchange.save().then((exch)=>{
         res.send(exch);
@@ -71,8 +71,8 @@ exchangeRouter.patch('/:id', (req, res)=>{
     if (!ObjectID.isValid(id)){
         return res.status(404).send();
     };
-    let exch = _.pick(req.body, ['updateInterval', 'localCurrency', 'apiBaseUrl'])
-    exch.changed = new Date().getTime();
+    let exch = _.pick(req.body, ['name','ccxt_id','includeIntoQuery', 'localCurrency'])
+    exch.updatedAt = new Date().getTime();
     Exchange.findByIdAndUpdate(id, {$set: exch}, {new:true}).then((exchange)=>{
         if(!exchange){
             return res.status(404).send();

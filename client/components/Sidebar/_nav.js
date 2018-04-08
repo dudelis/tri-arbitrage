@@ -6,23 +6,36 @@ export default {
         icon: 'icon-speedometer',
         badge: {
           variant: 'info',
-          text: 'NEW'
+          icon: 'icon-home'
         }
+      },
+      {
+        name: 'Arbitrage',
+        url: '/arbitrage',
+        icon: 'icon-grid',
+        children:[
+          {
+            name: 'Simple',
+            url: '/arbitrage/simple'
+          }
+        ]
       },
       {
         name: 'Admin',
         url: '/admin',
-        icon: 'icon-puzzle',
+        icon: 'icon-settings',
         children: [
           {
             name: 'Exchanges',
-            url: '/admin/exchange',
-            icon: 'icon-puzzle'
+            url: '/admin/exchange'
           },
           {
             name: 'Fiats',
-            url: '/admin/fiat',
-            icon: 'icon-puzzle'
+            url: '/admin/fiat'
+          },
+          {
+            name: 'Tickers',
+            url: '/admin/ticker'
           },
         ]
     }

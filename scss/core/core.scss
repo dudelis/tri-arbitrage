@@ -3,7 +3,11 @@
 
 @import "animate";
 
+// Components
+@import "grid";
 @import "gridtoolbar";
-@import "layout";
 @import "navbar";
 @import "sidebar";
+
+// Layout Options
+@import "layout";

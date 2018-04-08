@@ -5,7 +5,7 @@ const async = require('async');
 
 const server = require('./server/server');
 const logger = require('./utils/logger');
-// const cryptoAggregator = require('./server/crypto-aggregator');
+const cryptoAggregator = require('./server/aggregator/crypto-aggregator');
 const fiatAggregator = require('./server/aggregator/fiat-aggregator');
 
 async.parallel([

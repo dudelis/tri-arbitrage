@@ -1,4 +1,4 @@
-const logger = require('../utils/logger');
+const logger = require('./../../utils/logger');
 const {Exchange} = require('../models/exchange');
 const exchangeInitializer = require('./exchange-initializer');
 const orderbookPlugin = require('./orderbook-plugin');

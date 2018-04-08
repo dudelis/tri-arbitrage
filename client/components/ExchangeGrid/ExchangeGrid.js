@@ -4,24 +4,29 @@ import ReactDataGrid from 'react-data-grid';
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 
 import { getExchanges, setSelectedItems, deleteExchange } from '../../actions/exchanges';
+import ModalDelete from './ModalDelete';
+import ExchangeAddModal from './ExchangeAddModal';
+import ExchangeEditModal from './ExchangeEditModal';
 import Toolbar from './Toolbar';
+
 
 class ExchangeGrid extends Component {
     constructor(props, context) {
         super(props, context);
 
         this.toggleModalDelete = this.toggleModalDelete.bind(this);
+        this.toggleModalEdit = this.toggleModalEdit.bind(this);
         this.getCellActions = this.getCellActions.bind(this);
         this.confirmModalDelete = this.confirmModalDelete.bind(this);
         const _columns = [
-            { key: 'name', name: 'Name' },
+            { key: 'name', name: 'Name'},
             { key: 'ccxt_id', name: 'CCXT-ID' },
             { key: 'localCurrency', name: 'Local Currency' },
             { 
                 key: 'includeIntoQuery',
                 name: 'Include Into Query',
-                formatter: function(val){
-                    return val ? <input type="checkbox" checked readOnly/>: <input type="checkbox" readOnly/>  
+                formatter: function(col){
+                    return col.value ? 'Yes':'No'  
                 }
             },
             { key: '_id', name: 'ID' },
@@ -30,23 +35,23 @@ class ExchangeGrid extends Component {
         this.state = {
             _columns,
             modalDelete: false,
-            deleteId: ''
+            modalEdit: false,
+            deleteId: '',
+            exchangeId:''
         };
-
-    }
-        
-      
+    };     
     componentWillMount(){
         this.props.getExchanges();
     };
-    onRowsSelected = (rows) => {
-        const selectedItems = this.props.exchanges.selectedItems.concat(rows.map(r => r.row._id));
+    onRowsSelected = (rows, idx) => {
+        const selectedItems = [];
+        selectedItems.push(rows[0].row._id); // = this.props.exchanges.selectedItems.concat(rows.map(r => r.row._id));
         this.props.setSelectedItems(selectedItems);
     };
     onRowsDeselected = (rows) => {
-        let rowIds = rows.map(r=> r.row._id);
-        const selectedItems = this.props.exchanges.selectedItems.filter((id) => rowIds.indexOf(id)=== -1);
-        this.props.setSelectedItems(selectedItems);
+        // let rowIds = rows.map(r=> r.row._id);
+        // const selectedItems = this.props.exchanges.selectedItems.filter((id) => rowIds.indexOf(id)=== -1);
+        this.props.setSelectedItems([]);
     };
 
     rowGetter = (i) => {
@@ -63,6 +68,17 @@ class ExchangeGrid extends Component {
             }];
         }
     };
+
+    //Modals
+    toggleModalEdit(e) {
+        if (e && e.target.id === 'addExchange'){
+            this.props.setSelectedItems([]);
+        }
+        this.setState({
+            modalEdit: !this.state.modalEdit
+        });
+    };
+
     confirmModalDelete(){
         const _id = this.state.deleteId;
         if (_id){
@@ -76,10 +92,15 @@ class ExchangeGrid extends Component {
             modalDelete: !this.state.modalDelete
         });
     };
+    
     render() {
         return  (
             <div>
-                <Toolbar />
+                <Toolbar 
+                    addButtonClick={this.toggleModalEdit}
+                    editButtonClick={this.toggleModalEdit}
+                    toggleModalEdit={this.toggleModalEdit}
+                    exchangeId={this.props.exchanges.selectedItems[0]}/>
                 <ReactDataGrid
                     rowKey="_id"
                     columns={this.state._columns}
@@ -89,7 +110,7 @@ class ExchangeGrid extends Component {
                     getCellActions={this.getCellActions}
                     rowSelection = {{
                         showCheckbox: true,
-                        enableShiftSelect: true,
+                        enableShiftSelect: false,
                         onRowsSelected: this.onRowsSelected,
                         onRowsDeselected: this.onRowsDeselected,
                         selectBy:{
@@ -99,16 +120,24 @@ class ExchangeGrid extends Component {
                             }
                         }
                     }}/>
-                <Modal isOpen={this.state.modalDelete} toggle={this.toggleModalDelete} className={this.props.className}>
-                    <ModalHeader toggle={this.toggleModalDelete}>Delete</ModalHeader>
-                    <ModalBody>
-                        Are you sure you would like to delete the item?
-                    </ModalBody>
-                    <ModalFooter>
-                        <Button color="primary" onClick={this.confirmModalDelete}>Delete</Button>{' '}
-                        <Button color="secondary" onClick={this.toggleModalDelete}>Cancel</Button>
-                    </ModalFooter>
-                </Modal>                
+                <ModalDelete
+                    modalDelete={this.state.modalDelete}
+                    toggleModalDelete={this.toggleModalDelete}
+                    confirmModalDelete={this.confirmModalDelete}/>
+                {this.props.exchanges.selectedItems[0] ? 
+                    <ExchangeEditModal
+                    exchangeId={this.props.exchanges.selectedItems[0]}
+                    exchange={this.props.exchanges.data.find(ex => ex._id === this.props.exchanges.selectedItems[0])}
+                    isOpen={this.state.modalEdit}
+                    toggle={this.toggleModalEdit}
+                    />
+                    :
+                    <ExchangeAddModal
+                        exchange={this.props.exchanges.data.find(ex => ex._id === this.props.exchanges.selectedItems[0])}
+                        isOpen={this.state.modalEdit}
+                        toggle={this.toggleModalEdit}
+                    />                    
+                }
             </div>
         );
       }

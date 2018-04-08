@@ -14,15 +14,12 @@ var start = function(){
     app.use(bodyParser.json());
     //API routes
     app.use('/api', api_router);
-    //require('./api')(app);
-    
+     
 
     app.use(express.static(path.resolve(__dirname, '../public')));
     app.get('*', function (req, res) {
         res.sendFile(path.join(__dirname, '../public', 'index.html'));
-    });
-      
-       
+    });       
 
     // Turn on that server!
     app.listen(process.env.PORT, () => {

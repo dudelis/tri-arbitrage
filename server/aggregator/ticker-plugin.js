@@ -1,6 +1,6 @@
 const _ = require('lodash');
 
-const logger = require('../utils/logger');
+const logger = require('./../../utils/logger');
 const {Ticker} = require('../models/ticker');
 const exchangeInitializer = require('./exchange-initializer');
 
@@ -13,6 +13,7 @@ const syncItem = async(exchange, symbol, createdAt)=>{
         const tickerResponse = await exchangeInstance.fetchTicker(symbol);
         let itemBody = _.pick(tickerResponse, ['symbol', 'timestamp','high', 'low', 'bid', 'ask', 'vwap', 'last', 'baseVolume']);
         itemBody._exchange = exchange._id;
+        // itemBody._exchangeName = exchange.name;
         itemBody.createdAt = createdAt;
         const ticker = new Ticker(itemBody);
         await ticker.save();

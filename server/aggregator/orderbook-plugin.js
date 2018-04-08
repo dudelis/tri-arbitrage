@@ -1,6 +1,6 @@
 const _ = require('lodash');
 
-const logger = require('../utils/logger');
+const logger = require('./../../utils/logger');
 const {Orderbook} = require('../models/orderbook');
 const exchangeInitializer = require('./exchange-initializer');
 

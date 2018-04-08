@@ -31,6 +31,9 @@ var exchangeSchema = new mongoose.Schema({
     createdAt:{
         type: Number,
         default: new Date().getTime()
+    },
+    updatedAt:{
+        type: Number
     }
 });
 

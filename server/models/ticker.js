@@ -1,11 +1,15 @@
 const mongoose = require('mongoose');
 
-var tickerSchema = new mongoose.Schema({
+const tickerSchema = new mongoose.Schema({
     _exchange:{
         type: mongoose.Schema.Types.ObjectId,
         required:true,
         ref: 'Exchange'
     },
+    // _exchangeName:{
+    //     type: String,
+    //     required: true
+    // },
     symbol: {
         type: String,
         required: true,
@@ -42,6 +46,46 @@ var tickerSchema = new mongoose.Schema({
     }
 });
 
-var Ticker = mongoose.model('Ticker', tickerSchema);
+tickerSchema.statics.getArbitrageTickers = async function(base) {
+    const regex = new RegExp("^" + base); //getting all the tickers for a certain CryptoCurrency
+    return this.aggregate([
+        {
+            $sort: {createdAt: 1}
+        },
+        {
+            $group:{
+                _id: "$_exchange",
+                _tickerId: {$last: '$_id'},
+                timestamp: {$last: '$timestamp'},
+                bid: {$last: '$bid'},
+                ask: {$last: '$ask'},
+                symbol: {$last: '$symbol'}
+        }},
+        { 
+            $lookup:{
+                from: "exchanges",
+                localField: "_id",
+                foreignField: "_id",
+                as: "exchange"
+        }},
+        {
+            "$match":{
+                $and:[{
+                    'exchange.includeIntoQuery': true,
+                },{
+                    symbol: regex
+                }
+            ]
+            }
+        },
+        {
+            $addFields:{
+                exchange: {$arrayElemAt: ['$exchange', 0]}
+            }
+        }
+    ]);
+};
+
+const Ticker = mongoose.model('Ticker', tickerSchema);
 
 module.exports = {Ticker};
