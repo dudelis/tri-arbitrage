@@ -70,7 +70,6 @@ const getArbitrageTable = async (base) =>{
             columns,
             rows
         }
-
     } catch(e){
         logger.error(`Error getting the Arbitrage table for ${base}`, {base, e});
     }
@@ -83,7 +82,7 @@ const getArbitrageTable = async (base) =>{
 // }
 // check();
 
-module.exports = {getArbitrageTable}
+module.exports = {getArbitrageTable, getConvertedTickers}
 
 
 

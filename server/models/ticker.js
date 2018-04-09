@@ -47,6 +47,7 @@ const tickerSchema = new mongoose.Schema({
 });
 
 tickerSchema.statics.getArbitrageTickers = async function(base) {
+    console.log(base);
     const regex = new RegExp("^" + base); //getting all the tickers for a certain CryptoCurrency
     return this.aggregate([
         {

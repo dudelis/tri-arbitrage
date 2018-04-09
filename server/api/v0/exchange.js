@@ -2,7 +2,9 @@ const _ = require('lodash');
 const exchangeRouter = require('express').Router();
 const {ObjectID} = require('mongodb');
 
-const {Exchange} = require('../../models/exchange');
+const { Exchange } = require('./../../models/exchange');
+const { Ticker } = require('./../../models/ticker');
+const { Orderbook } = require('./../../models/orderbook');
 
 exchangeRouter.get('/', async (req, res)=>{
     try{
@@ -51,27 +53,32 @@ exchangeRouter.post('/', (req, res)=>{
         res.status(400).send(e);
     });
 });
-exchangeRouter.delete('/:id', (req, res)=>{
-    const id = req.params.id;
-    if (!ObjectID.isValid(id)){
-        return res.status(404).send();
-    };
-    Exchange.findByIdAndRemove(id).then((exchange)=>{
-        if (exchange){
-            res.send({exchange});
-        } else{
+exchangeRouter.delete('/:id', async (req, res)=>{
+    try{
+        const id = req.params.id;
+        if (!ObjectID.isValid(id)){
+            return res.status(404).send();
+        };
+        const exchange = await Exchange.findByIdAndRemove(id);
+        if (exchange)
+        {
+            const tickers = await Ticker.remove({'_exchange' : exchange._id});
+            const orderbooks = await Orderbook.remove({'_exchange' : exchange._id});
+            res.send({exchange, tickers, orderbooks});
+        } else {
             res.status(404).send();
-        }
-    }, (e)=>{
+        };
+    } catch (e){
         res.status(400).send();
-    });
+    }
 });
+
 exchangeRouter.patch('/:id', (req, res)=>{
     const id = req.params.id;
     if (!ObjectID.isValid(id)){
         return res.status(404).send();
     };
-    let exch = _.pick(req.body, ['name','ccxt_id','includeIntoQuery', 'localCurrency'])
+    let exch = _.pick(req.body, ['name','ccxt_id','includeIntoQuery', 'localCurrency', 'symbols'])
     exch.updatedAt = new Date().getTime();
     Exchange.findByIdAndUpdate(id, {$set: exch}, {new:true}).then((exchange)=>{
         if(!exchange){

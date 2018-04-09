@@ -9,9 +9,9 @@ const cryptoAggregator = require('./server/aggregator/crypto-aggregator');
 const fiatAggregator = require('./server/aggregator/fiat-aggregator');
 
 async.parallel([
-    // function startCryptoAggregator(callback){
-    //   cryptoAggregator.start(callback);
-    // },
+    function startCryptoAggregator(callback){
+      cryptoAggregator.start(callback);
+    },
     // function startFiatAggregator(callback){
     //   fiatAggregator.start(callback);
     // },

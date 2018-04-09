@@ -30,7 +30,6 @@ class ExchangeGrid extends Component {
                 }
             },
             { key: '_id', name: 'ID' },
-
         ];
         this.state = {
             _columns,
