@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import SimpleArbitrageGrid from './../../components/arbitrage/simplearbitragegrid';
+//import SimpleArbitrageGrid from './../../components/arbitrage/simplearbitragegrid';
+import TabsView from './../../components/arbitrage/tabsview';
 
 class SimpleArbitrageView extends Component {
     constructor(props){
@@ -9,7 +10,7 @@ class SimpleArbitrageView extends Component {
     render(){
         return (
             <div className="animated fadeIn">
-                <SimpleArbitrageGrid />
+                <TabsView />
             </div>
         )
     }

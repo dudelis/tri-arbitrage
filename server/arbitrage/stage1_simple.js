@@ -15,7 +15,7 @@ const getConvertedTickers  = async (baseCrypto)=>{
 
         const fiats = await Fiat.getLatestFiats();
         const convertedTickers = tickers.map((ticker)=>{
-            const quoteCurrency = ticker.symbol.split('/')[1]; //getting the 
+            const quoteCurrency = ticker.symbol.split('/')[1]; //getting the quote currency
             let rate = 1;
             if (quoteCurrency !== baseFiat){
                 const fiatObj = fiats.find((fiat)=>{
