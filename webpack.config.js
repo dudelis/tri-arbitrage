@@ -11,39 +11,29 @@ const BUILD_DIR = path.resolve(__dirname, 'public');
 const SRC_DIR = path.resolve(__dirname, 'client');
 
 
-module.exports = (env={}) => {
-    return {
-        entry: {
-            index: [SRC_DIR + '/index.js']
+module.exports = {
+    entry: {
+        index: [SRC_DIR + '/index.js']
+    },
+    output: {
+        path: BUILD_DIR,
+        filename: '[name].bundle.js'
+    },
+    module:{
+        rules:[{
+            loader: 'babel-loader',
+            test: /\.js$/,
+            exclude: /node_modules/
+        },{
+            loader: 'babel-loader',
+            test: /\.jsx$/,
+            exclude: /node_modules/
         },
-        output: {
-            path: BUILD_DIR,
-            filename: '[name].bundle.js'
+        {
+            test: /\.html$/,
+            loader: 'html-loader'
         },
-        devtool: env.prod ? 'source-map' : 'cheap-module-eval-source-map',
-        devServer:{
-            contentBase: BUILD_DIR,
-            compress: true,
-            hot: true,
-            open: true,
-            historyApiFallback: true
-        },
-
-        module:{
-            rules:[{
-                loader: 'babel-loader',
-                test: /\.js$/,
-                exclude: /node_modules/
-            },{
-                loader: 'babel-loader',
-                test: /\.jsx$/,
-                exclude: /node_modules/
-            },
-            {
-                test: /\.html$/,
-                loader: 'html-loader'
-            },
-            {
+        {
             test: /\.(scss)$/,
             use: ['css-hot-loader'].concat(extractSCSS.extract({
                 fallback: 'style-loader',
@@ -57,59 +47,49 @@ module.exports = (env={}) => {
                     }
                 ]
             }))
-            },
-            {
-                test: /\.css$/,
-                use: extractCSS.extract({
-                  fallback: 'style-loader',
-                  use: 'css-loader'
-                })
-            },
-            //   {
-            //     test: /\.s?css$/,
-            //     use: [
-            //         'style-loader',
-            //         'css-loader',
-            //         'sass-loader'
-            //     ]
-            // },
-            
-            {
-                test: /\.(png|jpg|jpeg|gif|ico|svg)$/,
-                use: [
-                  {
-                    // loader: 'url-loader'
-                    loader: 'file-loader',
-                    options: {
-                      name: './img/[name].[hash].[ext]'
-                    }
-                  }
-                ]
-            },{
-                test: /\.(woff(2)?|ttf|eot|svg)(\?v=\d+\.\d+\.\d+)?$/,
+        },
+        {
+            test: /\.css$/,
+            use: extractCSS.extract({
+                fallback: 'style-loader',
+                use: 'css-loader'
+            })
+        },            
+        {
+            test: /\.(png|jpg|jpeg|gif|ico|svg)$/,
+            use: [
+                {
+                // loader: 'url-loader'
                 loader: 'file-loader',
                 options: {
-                  name: './fonts/[name].[hash].[ext]'
+                    name: './img/[name].[hash].[ext]'
                 }
-            }]
-        },
-        plugins: [
-            new webpack.NamedModulesPlugin(),
-            extractCSS,
-            extractSCSS,
-            new HtmlWebpackPlugin(
-                {
-                  inject: true,
-                  template: './client/public/index.html'
                 }
-            ),
-            new CopyWebpackPlugin([
-                {from: './client/public/img', to: 'img'}
-              ],
-              {copyUnmodified: false}
-            )
-        ]        
-    }
+            ]
+        },{
+            test: /\.(woff(2)?|ttf|eot|svg)(\?v=\d+\.\d+\.\d+)?$/,
+            loader: 'file-loader',
+            options: {
+                name: './fonts/[name].[hash].[ext]'
+            }
+        }]
+    },
+    plugins: [
+        new webpack.NamedModulesPlugin(),
+        extractCSS,
+        extractSCSS,
+        new HtmlWebpackPlugin(
+            {
+                inject: true,
+                template: './client/public/index.html'
+            }
+        ),
+        new CopyWebpackPlugin([
+            {from: './client/public/img', to: 'img'}
+            ],
+            {copyUnmodified: false}
+        )
+    ],      
 }
 
 
