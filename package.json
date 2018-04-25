@@ -5,13 +5,15 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node app.js",
     "dev": "nodemon app.js",
     "build:prod": "webpack --config webpack.prod.js --display-error-details --progress",
     "build:dev": "webpack --config webpack.dev.js --display-error-details --progress",
     "dev-server": "webpack-dev-server",
     "dev-client": "webpack -d --progress --watch --config webpack.dev.js",
-    "clean": "rimraf ./public"
+    "clean": "rimraf ./public",
+
+    "start": "node app.js",
+    "heroku-postbuild":"yarn run build:prod"
   },
   "repository": {
     "type": "git",
