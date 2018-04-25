@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 //import SimpleArbitrageGrid from './../../components/arbitrage/simplearbitragegrid';
-import TabsView from './../../components/arbitrage/tabsview';
+import TabsView from './../../components/Arbitrage/tabsview';
 
 class SimpleArbitrageView extends Component {
     constructor(props){

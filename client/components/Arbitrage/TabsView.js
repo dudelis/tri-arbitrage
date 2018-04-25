@@ -6,7 +6,8 @@ import classnames from 'classnames';
 import SimpleArbitrageGrid from './SimpleArbitrageGrid';
 import ConvertedTickersGrid from './ConvertedTickersGrid';
 
-export default class Example extends React.Component {
+
+export default class TabsView extends React.Component {
     constructor(props) {
       super(props);
   

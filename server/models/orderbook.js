@@ -13,8 +13,7 @@ var orderbookSchema = new mongoose.Schema({
         trim: true
     },
     timestamp:{
-        type: Number,
-        required: true
+        type: Number
     },
     asks:[[Number]],
     bids:[[Number]],

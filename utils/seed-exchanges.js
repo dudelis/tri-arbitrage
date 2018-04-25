@@ -38,8 +38,8 @@ const exchanges = [{
     includeIntoQuery: true,
     symbols:['BTC/THB']
 },{
-    name: 'Bitcoin.co.id',
-    ccxt_id: 'bitcoincoid',
+    name: 'INDODAX',
+    ccxt_id: 'indodax',
     localCurrency: 'IDR',
     includeIntoQuery: true,
     symbols:['BTC/IDR']
