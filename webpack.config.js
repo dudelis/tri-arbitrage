@@ -40,10 +40,16 @@ module.exports = {
                 use: [
                     {
                         loader: 'css-loader',
-                        options: {alias: {'../img': '../public/img'}}
+                        options: {
+                            alias: {'../img': '../public/img'},
+                            sourceMap: true
+                        }
                     },
                     {
-                        loader: 'sass-loader'
+                        loader: 'sass-loader',
+                        options: {
+                            sourceMap: true
+                        }
                     }
                 ]
             }))

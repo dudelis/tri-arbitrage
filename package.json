@@ -10,7 +10,7 @@
     "build:prod": "webpack --config webpack.prod.js --display-error-details --progress",
     "build:dev": "webpack --config webpack.dev.js --display-error-details --progress",
     "dev-server": "webpack-dev-server",
-    "dev-client": "webpack -d --progress --watch --profile --json > compilation-stats.json --config webpack.dev.js",
+    "dev-client": "webpack -d --progress --watch --config webpack.dev.js",
     "clean": "rimraf ./public"
   },
   "repository": {
