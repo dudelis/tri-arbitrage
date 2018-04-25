@@ -12,9 +12,9 @@ async.parallel([
     function startCryptoAggregator(callback){
       cryptoAggregator.start(callback);
     },
-    // function startFiatAggregator(callback){
-    //   fiatAggregator.start(callback);
-    // },
+    function startFiatAggregator(callback){
+      fiatAggregator.start(callback);
+    },
     // function log(callback){
     //   console.log('hello');
     // },
