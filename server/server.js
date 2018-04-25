@@ -23,7 +23,7 @@ var start = function(){
 
     // Turn on that server!
     app.listen(process.env.PORT, () => {
-    logger.info(`App listening on port ${process.env.PORT}`);
+        logger.info(`App listening on port ${process.env.PORT}`);
     });
 };
 module.exports = {start};
