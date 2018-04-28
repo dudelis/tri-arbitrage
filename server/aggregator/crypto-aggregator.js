@@ -5,17 +5,27 @@ const orderbookPlugin = require('./orderbook-plugin');
 const tickerPlugin = require('./ticker-plugin');
 
 const moduleName = 'crypto-aggregator';
-let _isRunning = true;
+let _isRunning = false;
 let _interval = process.env.QUERY_INTERVAL;
+const _minInterval = 60000; //Minimun interval is 1 min sec.
 let _timeoutId;
 let _delay = 2000; //2000 ms to not be banned by exchanges
 
 
+const getSettings = ()=>{
+    return {
+        isrunning: _isRunning,
+        syncinterval: _interval
+    }
+}
+
 const start = async()=>{
     try{
-        _isRunning = true;
-        _startJob();
-        logger.info('Sync job was started!', {moduleName});
+        if (!_isRunning){
+            _isRunning = true;
+            _startJob();
+            logger.info('Sync job was started!', {moduleName});
+        }
     } catch(e){
         logger.error('Sync job cannot be started!', {moduleName, e});
     }
@@ -50,7 +60,7 @@ const syncItems = async()=>{
     }
 }
 const setInterval = (num) =>{
-    if (num > process.env.QUERY_INTERVAL){
+    if (num > _minInterval){
         _interval = num;
     } else{
         _interval = process.env.QUERY_INTERVAL;
@@ -59,10 +69,12 @@ const setInterval = (num) =>{
 }
 const _startJob = async()=>{
     syncItems();
+    console.log('items will be synced');
     if(_isRunning)
     {
-        _timerId = setTimeout(_startJob, _interval);
+        _timeoutId = setTimeout(_startJob, _interval);
+        console.log('timerId: ', _timeoutId);
     }
 }
 
-module.exports = {start, stop, setInterval}
+module.exports = {start, stop, setInterval, syncItems, getSettings}
