@@ -56,6 +56,12 @@ export const setSelectedItems = (selectedItems = [])=>{
         });
     }
 };
+//SORT_EXCHANGES
+export const sortExchanges = (data) =>{
+    return (dispatch) => {
+        dispatch({type:'SORT_EXCHANGES', data});
+    }
+}
 
 export const updateExchange = (id, exchange) =>{
     return (dispatch) =>{

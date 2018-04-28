@@ -11,6 +11,7 @@ class ConvertedTickersGrid extends Component {
     constructor(props, context) {
         super(props, context);
         this.componentWillMount = this.componentWillMount.bind(this);
+        this.refreshGrid = this.refreshGrid.bind(this);
         this.rowGetter = this.rowGetter.bind(this);
         this.handleGridSort = this.handleGridSort.bind(this);
 
@@ -43,6 +44,9 @@ class ConvertedTickersGrid extends Component {
         const data = sortDirection === 'NONE' ? this.props.arbitrage.convertedtickers.slice(0) : this.props.arbitrage.convertedtickers.sort(comparer);
         this.props.sortConvertedTickers(data);
     };
+    refreshGrid(){
+        this.props.getConvertedTickers(this.state.cryptocurrency);
+    }
     rowGetter = (i) => {
         return this.props.arbitrage.convertedtickers[i];
     };
@@ -50,7 +54,7 @@ class ConvertedTickersGrid extends Component {
     render() {
         return  (
             <div>
-                <DataGridToolbar handleRefreshClick={this.props.getConvertedTickers(this.state.cryptocurrency)}/>
+                <DataGridToolbar handleRefreshClick={this.refreshGrid}/>
                 <ReactDataGrid
                     columns= {this.state.columns}
                     rowGetter= {this.rowGetter}

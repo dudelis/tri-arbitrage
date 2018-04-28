@@ -15,8 +15,7 @@ export default (state = arbitrageReducerDefaultState, action) => {
             const convertedtickers = action.convertedtickers;
             return {...state, convertedtickers}
         case 'SORT_CONVERTED_TICKERS':
-            const sortedData = action.convertedtickers
-            return {...state, convertedtickers: sortedData}
+            return {...state, convertedtickers: action.convertedtickers}
         default:
             return state;
     }

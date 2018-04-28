@@ -9,16 +9,18 @@ import DataGridToolbar from './../DataGridToolbar/DataGridToolbar';
 class SimpleArbitrageGrid extends Component {
     constructor(props, context) {
         super(props, context);
+        this.refreshGrid = this.refreshGrid.bind(this);
         this.state ={
             cryptocurrency: 'BTC'
-        };
-        this.componentWillMount = this.componentWillMount.bind(this);
-        
+        };        
     }       
       
     componentWillMount(){
         this.props.getArbitrageTable(this.state.cryptocurrency);
     };
+    refreshGrid(){
+        this.props.getArbitrageTable(this.state.cryptocurrency);
+    }
     rowGetter = (i) => {
         return this.props.arbitrage.arbitrageTable.rows[i];
     };
@@ -26,7 +28,7 @@ class SimpleArbitrageGrid extends Component {
     render() {
         return  (
             <div className="arbitrage-grid">
-                <DataGridToolbar handleRefreshClick={this.props.getArbitrageTable(this.state.cryptocurrency)}/>
+                <DataGridToolbar handleRefreshClick={this.refreshGrid}/>
                 <ReactDataGrid
                     columns= {this.props.arbitrage.arbitrageTable.columns}
                     rowGetter= {this.rowGetter}

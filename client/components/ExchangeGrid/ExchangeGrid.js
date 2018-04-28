@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import ReactDataGrid from 'react-data-grid';
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 
-import { getExchanges, setSelectedItems, deleteExchange } from '../../actions/exchanges';
+import { getExchanges, setSelectedItems, deleteExchange, sortExchanges } from '../../actions/exchanges';
 import ModalDelete from './ModalDelete';
 import ExchangeAddModal from './ExchangeAddModal';
 import ExchangeEditModal from './ExchangeEditModal';
@@ -19,15 +19,16 @@ class ExchangeGrid extends Component {
         this.getCellActions = this.getCellActions.bind(this);
         this.confirmModalDelete = this.confirmModalDelete.bind(this);
         const _columns = [
-            { key: 'name', name: 'Name'},
-            { key: 'ccxt_id', name: 'CCXT-ID' },
-            { key: 'localCurrency', name: 'Local Currency' },
+            { key: 'name', name: 'Name', sortable:true},
+            { key: 'ccxt_id', name: 'CCXT-ID', sortable:true },
+            { key: 'localCurrency', name: 'Local Currency', sortable:true },
             { 
                 key: 'includeIntoQuery',
                 name: 'Include Into Query',
                 formatter: function(col){
                     return col.value ? 'Yes':'No'  
-                }
+                },
+                sortable:true
             },
             { key: '_id', name: 'ID' },
         ];
@@ -91,6 +92,17 @@ class ExchangeGrid extends Component {
             modalDelete: !this.state.modalDelete
         });
     };
+    handleGridSort = (sortColumn, sortDirection) => {
+        const comparer = (a, b) => {
+          if (sortDirection === 'ASC') {
+            return (a[sortColumn] > b[sortColumn]) ? 1 : -1;
+          } else if (sortDirection === 'DESC') {
+            return (a[sortColumn] < b[sortColumn]) ? 1 : -1;
+          }
+        };    
+        const data = sortDirection === 'NONE' ? this.props.exchanges.data.slice(0) : this.props.exchanges.data.sort(comparer);
+        this.props.sortExchanges(data);
+    };
     
     render() {
         return  (
@@ -107,6 +119,7 @@ class ExchangeGrid extends Component {
                     rowsCount={this.props.exchanges.data.length}
                     minHeight={800}
                     getCellActions={this.getCellActions}
+                    onGridSort={this.handleGridSort}
                     rowSelection = {{
                         showCheckbox: true,
                         enableShiftSelect: false,
@@ -148,7 +161,8 @@ const mapStateToProps = (state, props) =>({
 const mapDispatchToProps = (dispatch, props) =>({
     getExchanges : () => dispatch(getExchanges()),
     setSelectedItems : (selectedItems) => dispatch(setSelectedItems(selectedItems)),
-    deleteExchange: (id) => dispatch(deleteExchange(id))
+    deleteExchange: (id) => dispatch(deleteExchange(id)),
+    sortExchanges: (data) => dispatch(sortExchanges(data))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(ExchangeGrid);
