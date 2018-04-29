@@ -14,6 +14,7 @@ const AppRouter = () =>(
                 <Route path="/dashboard" component={Full} exact/>
                 <Route path="/admin/exchange" component={Full} exact/>
                 <Route path="/admin/fiat" component={Full} exact/>
+                <Route path="/admin/log" component={Full} exact/>
                 <Route path="/admin/ticker" component={Full} exact/>
                 <Route path="/arbitrage/simple" component={Full} exact/>
                 <Route component={Page404} />

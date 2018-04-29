@@ -34,6 +34,10 @@ export default {
             url: '/admin/fiat'
           },
           {
+            name: 'Logs',
+            url: '/admin/log'
+          },
+          {
             name: 'Tickers',
             url: '/admin/ticker'
           },

@@ -4,6 +4,7 @@ import exchangeReducer from '../reducers/exchanges';
 import fiatReducer from '../reducers/fiats';
 import arbitrageReducer from './../reducers/arbitrage';
 import tickerReducer from './../reducers/tickers';
+import logReducer from './../reducers/logs';
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
@@ -13,7 +14,8 @@ export default () =>{
             exchanges: exchangeReducer,
             fiats: fiatReducer,
             arbitrage: arbitrageReducer,
-            tickers: tickerReducer
+            tickers: tickerReducer,
+            logs: logReducer
         }),
         composeEnhancers(applyMiddleware(thunk))
     );

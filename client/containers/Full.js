@@ -9,6 +9,7 @@ import { Container } from 'reactstrap';
 import Dashboard from './../views/Dashboard';
 import ExchangeView from '../views/admin/ExchangeView';
 import FiatView from './../views/admin/FiatView';
+import LogView from './../views/admin/LogView';
 import TickerView from './../views/admin/TickerView';
 import SimpleArbitrageView from './../views/arbitrage/SimpleArbitrageView';
 
@@ -27,6 +28,7 @@ class Full extends Component {
                                 <Route path="/admin/exchange" name="Exchanges" component={ExchangeView}/>
                                 <Route path="/admin/fiat" name="Fiat" component={FiatView}/>
                                 <Route path="/admin/ticker" name="Tickers" component={TickerView}/>
+                                <Route path="/admin/log" name="Logs" component={LogView}/>
                                 <Route path="/arbitrage/simple" name="Simple" component={SimpleArbitrageView}/>
                                 <Redirect from="/" to="/dashboard"/>
                             </Switch>
