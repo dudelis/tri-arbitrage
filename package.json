@@ -11,9 +11,8 @@
     "dev-server": "webpack-dev-server",
     "dev-client": "webpack -d --progress --watch --config webpack.dev.js",
     "clean": "rimraf ./public",
-
     "start": "node app.js",
-    "heroku-postbuild":"yarn run build:prod"
+    "heroku-postbuild": "yarn run build:prod"
   },
   "repository": {
     "type": "git",
@@ -52,7 +51,8 @@
     "redux-thunk": "^2.2.0",
     "simple-line-icons": "^2.4.1",
     "winston": "^2.4.0",
-    "winston-daily-rotate-file": "^1.7.2"
+    "winston-daily-rotate-file": "^1.7.2",
+    "winston-mongodb": "3.0.2"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",

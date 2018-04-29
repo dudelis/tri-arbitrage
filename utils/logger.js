@@ -1,6 +1,7 @@
 const fs = require('fs');
 const winston = require('winston');
 require('winston-daily-rotate-file');
+require('winston-mongodb');
 
 const tsFormat = () => (new Date()).toISOString();
 const logDir = 'logs';
@@ -28,6 +29,12 @@ var logger = new winston.Logger({
             json: true,
             colorize: true,
             timestamp: tsFormat
+        }),
+        new winston.transports.MongoDB({
+            level: process.env.NODE_ENV === 'development' ? 'debug' : 'info',
+            db: process.env.MONGODB_URI,
+            storeHost: true,
+            tryReconnect: true
         })
     ],
     exitOnError: false

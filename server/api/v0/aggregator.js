@@ -40,5 +40,13 @@ router.get('/crypto/stop', async(req, res)=>{
         res.status(400).send(e);
     }
 });
+router.get('/crypto/sync', async(req, res)=>{
+    try{
+        syncItems();
+        res.status(200).send();
+    } catch(e){
+        res.status(400).send(e);
+    }
+});
 
 module.exports = { aggregatorRouter: router }

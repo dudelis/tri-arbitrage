@@ -24,7 +24,6 @@ const start = async()=>{
         if (!_isRunning){
             _isRunning = true;
             _startJob();
-            logger.info('Sync job was started!', {moduleName});
         }
     } catch(e){
         logger.error('Sync job cannot be started!', {moduleName, e});
@@ -40,6 +39,7 @@ const stop = () =>{
 
 const syncItems = async()=>{
     try{
+        logger.info(`${moduleName} - Sync job was started`, {moduleName});
         var start = new Date();
         const createdAt = new Date().getTime();
         const exchanges = await Exchange.find({includeIntoQuery: true});
@@ -65,15 +65,13 @@ const setInterval = (num) =>{
     } else{
         _interval = process.env.QUERY_INTERVAL;
     }
-    logger.debug(`Query interval was changed to ${_interval}`, {moduleName});
+    logger.info(`${moduleName} query interval was changed to ${_interval}`, {moduleName});
 }
 const _startJob = async()=>{
     syncItems();
-    console.log('items will be synced');
     if(_isRunning)
     {
         _timeoutId = setTimeout(_startJob, _interval);
-        console.log('timerId: ', _timeoutId);
     }
 }
 

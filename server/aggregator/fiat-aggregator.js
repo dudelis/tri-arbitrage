@@ -20,13 +20,13 @@ const setInterval = (num) =>{
     } else{
         _interval = process.env.FIAT_QUERY_INTERVAL;
     }
-    logger.debug(`Query interval was changed to ${_interval}`, {moduleName});
+    logger.debug(`${moduleName} query interval was changed to ${_interval}`, {moduleName});
 }
 const start = async()=>{
     try{
         _isRunning = true;
         _startJob();
-        logger.info('Sync job was started!', {moduleName});
+        logger.info(`${moduleName} - Sync job was started!`, {moduleName});
     } catch(e){
         logger.error('Sync job cannot be started!', {moduleName, e});
     }
@@ -65,7 +65,7 @@ const syncItems = async()=>{
             }
         }                     
         var end = new Date();
-        logger.info(`Fiat currency rates were received for ${end-start} ms.`, {moduleName, start, end, duration: end - start})
+        logger.info(`${moduleName} currency rates were received for ${end-start} ms.`, {moduleName, start, end, duration: end - start})
     } catch(e){
         logger.error('Query fiat exchange rates error.', {moduleName, e})
     }
