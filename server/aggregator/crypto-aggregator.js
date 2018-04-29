@@ -62,10 +62,12 @@ const syncItems = async()=>{
 const setInterval = (num) =>{
     if (num > _minInterval){
         _interval = num;
+        logger.info(`${moduleName} query interval was changed to ${_interval}`, {moduleName});
     } else{
         _interval = process.env.QUERY_INTERVAL;
+        logger.info(`${moduleName} query interval cannot be changed to  ${num}. It cannot be less than ${_minInterval}`, {moduleName});
     }
-    logger.info(`${moduleName} query interval was changed to ${_interval}`, {moduleName});
+    return _interval;
 }
 const _startJob = async()=>{
     syncItems();

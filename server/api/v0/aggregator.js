@@ -15,8 +15,8 @@ router.post('/crypto/setinterval/:interval', async(req, res)=>{
     try{
         const interval = parseInt(req.params.interval);
         if (typeof interval === 'number'){
-            setInterval(interval);
-            res.status(200).send();
+            const changedInterval = setInterval(interval);
+            res.status(200).send({interval:changedInterval});
         } else{
             res.status(400).send()
         }
