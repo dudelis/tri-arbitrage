@@ -14,7 +14,7 @@ const ccxt = require('ccxt');
 // console.log(ccxt)
 
 
-
+var exchangeName = 'bittrex';
 
 
 // (async ()=>{
@@ -31,13 +31,14 @@ const ccxt = require('ccxt');
 //     let ticker = await bitstamp.fetchTicker('BTC/USD');
 //     console.log(bitstamp.id, ticker)
 // })()
-var exchangeName = 'acx';
+
 
 (async ()=>{
+    
     let exchange = new ccxt[exchangeName]();
-    //let markets = await exchange.load_markets();
-    //console.log(markets);
-    let ticker = await exchange.fetchOrderBook('BTC/AUD');
-    console.log(ticker);
-    console.log(ticker.asks.length, '     ', ticker.bids.length);
+    let markets = await exchange.load_markets();
+    
+    console.log(Object.keys(markets));
+    // let ticker = await exchange.fetchTicker('BTC/USDT');
+    // console.log(ticker);
 })()

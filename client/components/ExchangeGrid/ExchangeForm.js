@@ -1,9 +1,10 @@
 import React, {Component} from 'react';
 import { connect } from 'react-redux';
 import Select from 'react-select';
-import 'react-select/dist/react-select.css';
-
 import { Button, Form, FormGroup, Input, Label, Row, Col } from 'reactstrap';
+
+import 'react-select/dist/react-select.css';
+import { getExchanges, getExchange, getMarkets, clearMarkets } from './../../actions/ccxt';
 
 //exchangeId
 //isOpen
@@ -17,6 +18,7 @@ class ExchangeForm extends Component {
         this.onCheckboxChange = this.onCheckboxChange.bind(this);
         this.onSaveClick = this.onSaveClick.bind(this);
         this.onDropdownChange=this.onDropdownChange.bind(this);
+        this.onSelectChange = this.onSelectChange.bind(this);
         this.state ={
             name: props.exchange ? props.exchange.name : '',
             ccxt_id: props.exchange ? props.exchange.ccxt_id:'',
@@ -26,6 +28,13 @@ class ExchangeForm extends Component {
             dropdownSymbols: props.exchange ? props.exchange.symbols.map(symbol=>({value:symbol, label:symbol})) : []
         }
     }
+    componentWillMount(){
+        this.props.clearMarkets();
+        this.props.getExchanges();
+        if (this.state.ccxt_id){
+            this.props.getMarkets(this.state.ccxt_id);
+        }
+    };
     onCheckboxChange(e){
         const id = e.target.id;
         const value = e.target.checked;
@@ -62,13 +71,31 @@ class ExchangeForm extends Component {
                 includeIntoQuery: this.state.includeIntoQuery,
                 symbols: this.state.symbols
             });
-        }
-        
+        }        
+    }
+    onSelectChange(newValue){
+        this.setState({'ccxt_id': newValue});
+        this.props.getMarkets(newValue);
     }
 
     render(){
         return (
             <Form>
+                <FormGroup row>
+                    <Label sm={3} htmlFor="ccxt_id">CCXT-ID</Label>
+                    <Col sm={9}>
+                        <Select
+                            id="ccxt_id"
+                            name="ccxt_id"
+                            options= {this.props.ccxt.exchanges.map((item)=>({value: item, label: item})) }
+                            autoFocus
+                            simpleValue
+                            clearable = {true}
+                            onChange={this.onSelectChange}
+                            value={this.state.ccxt_id}
+                        />
+                    </Col>
+                </FormGroup>
                 <FormGroup row>
                     <Label for="name" sm={3}>Name</Label>
                     <Col sm={9}>
@@ -81,18 +108,7 @@ class ExchangeForm extends Component {
                             onChange={this.onPropertyChange} />
                     </Col>
                 </FormGroup>
-                <FormGroup row>
-                    <Label sm={3} htmlFor="ccxt_id">CCXT-ID</Label>
-                    <Col sm={9}>
-                        <Input
-                            type="text"
-                            name="ccxt_id"
-                            id="ccxt_id"
-                            placeholder="CCXT-ID" 
-                            value={this.state.ccxt_id}
-                            onChange={this.onPropertyChange} />
-                    </Col>
-                </FormGroup>
+                
                 <FormGroup row>
                     <Label sm={3} for="localCurrency">Local Currency</Label>
                     <Col sm={9}>
@@ -125,7 +141,8 @@ class ExchangeForm extends Component {
                         <Select.Creatable
                             multi={true}
                             onChange={this.onDropdownChange}
-                            value={this.state.dropdownSymbols}                            
+                            value={this.state.dropdownSymbols}
+                            options = {this.props.ccxt.markets.map((item)=>({value: item, label:item}) )}                         
                         />
                     </Col>
                 </FormGroup>
@@ -135,4 +152,15 @@ class ExchangeForm extends Component {
         )
     }
 }
-export default ExchangeForm;
+
+const mapStateToProps = (state, props) =>({
+    ccxt: state.ccxt
+});
+const mapDispatchToProps = (dispatch, props) =>({
+    getExchanges : () => dispatch(getExchanges()),
+    getExchange : (exchangeid) => dispatch(getExchange(exchangeid)),
+    getMarkets : (exchangeid) => dispatch(getMarkets(exchangeid)),
+    clearMarkets : () => dispatch(clearMarkets())
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(ExchangeForm);
