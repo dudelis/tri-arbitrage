@@ -36,22 +36,32 @@ const stop = () =>{
     }
     _isRunning = false;
 }
-
-const syncItems = async()=>{
+const syncExchange = async (ccxtid, createdAt)=>{
+    logger.info(`${ccxtid} - sync was started`, {moduleName, exchange: ccxtid});
+    const exchange = await Exchange.findOne({ccxt_id: ccxtid});
+    const start = new Date();
+    if (!createdAt){
+        createdAt = new Date().getTime();
+    } 
+    for (let symbol of exchange.symbols){
+        await orderbookPlugin.syncItem(exchange, symbol, createdAt);
+        await new Promise (resolve => setTimeout (resolve, _delay)); //rate limit to not be banned;
+        await tickerPlugin.syncItem(exchange, symbol, createdAt);
+        if (exchange.symbols.length > 1){
+            await new Promise (resolve => setTimeout (resolve, _delay)); //rate limit to not be banned;
+        }
+    }
+    const end = new Date();
+    logger.info(`${ccxtid} - exchange was queried for ${end-start} ms.`, {moduleName, exchange: ccxtid, start, end, duration: end - start})
+}
+const syncExchanges = async()=>{
     try{
         logger.info(`${moduleName} - Sync job was started`, {moduleName});
         var start = new Date();
         const createdAt = new Date().getTime();
         const exchanges = await Exchange.find({includeIntoQuery: true});
         for (let exchange of exchanges){
-            for (let symbol of exchange.symbols){
-                await orderbookPlugin.syncItem(exchange, symbol, createdAt);
-                await new Promise (resolve => setTimeout (resolve, _delay)); //rate limit to not be banned;
-                await tickerPlugin.syncItem(exchange, symbol, createdAt);
-                if (exchange.symbols.length > 1){
-                    await new Promise (resolve => setTimeout (resolve, _delay)); //rate limit to not be banned;
-                }
-            }
+            await syncExchange(exchange.ccxt_id, createdAt);
         }
         var end = new Date();
         logger.info(`${exchanges.length} exchanges were queried for ${end-start} ms.`, {moduleName, start, end, duration: end - start})
@@ -59,6 +69,7 @@ const syncItems = async()=>{
         logger.error('Query exchanges error.', {moduleName, e})
     }
 }
+
 const setInterval = (num) =>{
     if (num > _minInterval){
         _interval = num;
@@ -70,11 +81,11 @@ const setInterval = (num) =>{
     return _interval;
 }
 const _startJob = async()=>{
-    syncItems();
+    syncExchanges();
     if(_isRunning)
     {
         _timeoutId = setTimeout(_startJob, _interval);
     }
 }
 
-module.exports = {start, stop, setInterval, syncItems, getSettings}
+module.exports = {start, stop, setInterval, syncExchanges, syncExchange, getSettings}

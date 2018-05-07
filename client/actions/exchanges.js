@@ -9,9 +9,7 @@ export const addExchange = (exchange) =>{
             }), e => console.log(e)
         });
     }
-
 }
-
 export const getExchanges = ()=> {
     return (dispatch) => {
         axios.get('/api/v0/exchange').then((res)=>{
@@ -43,7 +41,6 @@ export const deleteExchange = (id) => {
             }, (e)=>{
                 console.log(e);
             });
-
         }
     }
 }

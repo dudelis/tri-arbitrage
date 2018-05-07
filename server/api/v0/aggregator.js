@@ -1,6 +1,6 @@
 const router = require('express').Router();
 
-const {start, stop, setInterval, syncItems, getSettings} = require('./../../aggregator/crypto-aggregator');
+const {start, stop, setInterval, syncExchanges, getSettings, syncExchange} = require('./../../aggregator/crypto-aggregator');
 
 router.get('/crypto/settings', async (req, res)=>{
     try{
@@ -42,7 +42,15 @@ router.get('/crypto/stop', async(req, res)=>{
 });
 router.get('/crypto/sync', async(req, res)=>{
     try{
-        syncItems();
+        syncExchanges();
+        res.status(200).send();
+    } catch(e){
+        res.status(400).send(e);
+    }
+});
+router.get('/crypto/exchange/:ccxtid', async(req, res)=>{
+    try{
+        syncExchanges();
         res.status(200).send();
     } catch(e){
         res.status(400).send(e);
