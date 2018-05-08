@@ -1,7 +1,7 @@
-
 const defaultState = {
     data: [],
-    searchFilter: ''
+    searchFilter: '',
+    selectedItems: []
 };
 export default (state = defaultState, action) => {
     switch (action.type){
@@ -12,6 +12,9 @@ export default (state = defaultState, action) => {
             return {...state, data: action.data}
         case 'SEARCH_LOGS':
             return {...state, searchFilter: action.searchFilter}
+        case 'LOG_SET_SELECTED_ITEMS':
+            const selectedItems = action.selectedItems;
+            return {...state, selectedItems};
         default:
             return state;
     }

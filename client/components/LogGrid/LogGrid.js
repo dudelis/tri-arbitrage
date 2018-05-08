@@ -2,9 +2,10 @@ import React, {Component} from 'react';
 import { connect } from 'react-redux';
 import ReactDataGrid from 'react-data-grid';
 
-import { getLogs, sortLogs, searchLogs } from './../../actions/logs';
-import logFilter from './../../selectors/logs';
+import { getLogs, sortLogs, searchLogs, setSelectedItems } from './../../actions/logs';
+import {logFilter} from './../../selectors/logs';
 import DataGridToolbar from './../DataGridToolbar/DataGridToolbar';
+import LogModal from './LogModal';
 
 class LogGrid extends Component {
     constructor(props, context) {
@@ -17,11 +18,13 @@ class LogGrid extends Component {
             { key: 'meta', name: 'Meta', sortable: true, formatter: ({value}) => JSON.stringify(value) }
         ];
         this.state = {
-            logLimit: 1000
+            logLimit: 1000,
+            modal: false
         };
         this.componentWillMount = this.componentWillMount.bind(this);
         this.refreshGrid = this.refreshGrid.bind(this);
         this.handleInputChange = this.handleInputChange.bind(this);
+        this.closeModal = this.closeModal.bind(this);
     };  
       
     componentWillMount(){
@@ -41,6 +44,17 @@ class LogGrid extends Component {
     handleInputChange = (e)=>{
         this.props.searchLogs(e.target.value);
     }
+    onRowsSelected = (rows, idx) => {
+        const selectedItems = [];
+        selectedItems.push(rows[0].row._id); // = this.props.exchanges.selectedItems.concat(rows.map(r => r.row._id));
+        this.props.setSelectedItems(selectedItems);
+        this.setState({modal:true});
+    };
+    onRowsDeselected = (rows) => {
+        // let rowIds = rows.map(r=> r.row._id);
+        // const selectedItems = this.props.exchanges.selectedItems.filter((id) => rowIds.indexOf(id)=== -1);
+        this.props.setSelectedItems([]);
+    };
     refreshGrid(){
         document.getElementById('grid-search-input').value = '';
         this.props.searchLogs();
@@ -48,7 +62,10 @@ class LogGrid extends Component {
     }
     rowGetter = (i) => {
         return this.props.logs.data[i];
-    };    
+    };
+    closeModal(){
+        this.setState({modal:false});
+    }
     
     render() {
         return  (
@@ -64,6 +81,22 @@ class LogGrid extends Component {
                     rowsCount={this.props.logs.data.length}
                     minHeight={800}
                     onGridSort={this.handleGridSort}
+                    rowSelection = {{
+                        showCheckbox: true,
+                        enableShiftSelect: false,
+                        onRowsSelected: this.onRowsSelected,
+                        onRowsDeselected: this.onRowsDeselected,
+                        selectBy:{
+                            keys: {
+                                rowKey: '_id', 
+                                values:  this.props.selectedItems
+                            }
+                        }
+                    }}
+                />
+                <LogModal
+                    isOpen = {this.state.modal}
+                    toggle = {this.closeModal}
                 />
             </div>
         );
@@ -71,13 +104,14 @@ class LogGrid extends Component {
 }
 
 const mapStateToProps = (state, props) =>({
-    logs: logFilter(state.logs.data, state.logs.searchFilter)
-
+    logs: logFilter(state.logs.data, state.logs.searchFilter),
+    selectedItems: state.logs.selectedItems
 });
 const mapDispatchToProps = (dispatch, props) =>({
     getLogs : (limit) => dispatch(getLogs(limit)),
     sortLogs : (data)=>dispatch(sortLogs(data)),
-    searchLogs : (filter)=>dispatch(searchLogs(filter))
+    searchLogs : (filter)=>dispatch(searchLogs(filter)),
+    setSelectedItems : (selectedItems) => dispatch(setSelectedItems(selectedItems))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(LogGrid);

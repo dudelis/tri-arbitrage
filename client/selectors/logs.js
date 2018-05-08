@@ -1,5 +1,5 @@
 
-export default (logs, search)=>{
+export const logFilter =  (logs, search)=>{
     return { 
         data: logs.filter((log)=>{
             const timestampMatch = search ? log.timestamp.toLowerCase().includes(search.toLowerCase()) : true;
@@ -11,3 +11,7 @@ export default (logs, search)=>{
         })
     }
 };
+
+export const logFind = (logs, id)=>{
+    return logs.find(log=> log._id === id);
+}

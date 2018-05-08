@@ -23,3 +23,11 @@ export const searchLogs = (searchFilter) =>{
         dispatch({type:'SEARCH_LOGS', searchFilter})
     }
 }
+export const setSelectedItems = (selectedItems = [])=>{
+    return (dispatch)=>{
+        dispatch({
+            type:'LOG_SET_SELECTED_ITEMS',
+            selectedItems
+        });
+    }
+};
