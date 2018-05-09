@@ -13,7 +13,7 @@ class Toolbar extends Component {
                             color="primary" 
                             onClick={this.props.addButtonClick}
                             id="addExchange"
-                            >
+                        >
                             <i className="fa fa-plus">
                             </i>
                             {'\u00A0'}Add
@@ -28,7 +28,15 @@ class Toolbar extends Component {
                             {'\u00A0'}
                             Edit
                         </Button>{' '}
-                        <Button outline color="primary" onClick={this.props.getExchanges}><i className="fa fa-refresh"></i>{'\u00A0'}Refresh</Button>
+                        <Button outline color="primary" onClick={this.props.getExchanges}><i className="fa fa-refresh"></i>{'\u00A0'}Refresh</Button>{' '}
+                        <Button
+                            outline
+                            color="primary"
+                            disabled={this.props.exchangeId ? false : true }
+                        >
+                            <i className="fa fa-cloud-download"></i>
+                            {'\u00A0'}Sync Exchange
+                        </Button>
                         
                     </Col>
                 </Row>

@@ -52,18 +52,23 @@ const stop = () =>{
     }
     _isRunning = false;
 }
-const syncExchange = async (ccxtid, createdAt)=>{
+const syncExchange = async (id)=>{
     try{
-        logger.info(`${ccxtid} - sync was started`, {moduleName, exchange: ccxtid});
-        const exchange = await Exchange.findOne({ccxt_id: ccxtid});
-        if (!createdAt){
-            createdAt = new Date().getTime();
-        }
+        const start = new Date();
+        const exchange = await Exchange.findById(id);
+        logger.info(`${exchange.ccxt_id} - sync was started`, {moduleName, exchange: exchange.ccxt_id});
+        const createdAt = new Date().getTime();
         await _syncExchange(exchange, createdAt);
         const end = new Date();
-        logger.info(`${ccxtid} - exchange was queried for ${end-start} ms.`, {moduleName, exchange: ccxtid, start, end, duration: end - start})
+        const message = `${exchange.ccxt_id} - exchange was queried for ${end-start} ms.`;
+        logger.info(message, {moduleName, exchange: exchange.ccxt_id, start, end, duration: end - start});
+        return {message};
     }catch(e){
-        logger.error(`${ccxtid} - error querying`, {exchange: ccxtid, e})
+        const msg = {
+            message: `${exchange.ccxt_id} - error querying`,
+            e
+        }
+        logger.error(msg.message, {exchange: exchange.ccxt_id, e})
     }
 }
 const syncExchanges = async()=>{

@@ -1,4 +1,6 @@
 const router = require('express').Router();
+const {ObjectID} = require('mongodb');
+
 
 const {start, stop, setInterval, syncExchanges, getSettings, syncExchange} = require('./../../aggregator/crypto-aggregator');
 
@@ -48,10 +50,18 @@ router.get('/crypto/sync', async(req, res)=>{
         res.status(400).send(e);
     }
 });
-router.get('/crypto/exchange/:ccxtid', async(req, res)=>{
+router.get('/crypto/exchange/:id', async(req, res)=>{
     try{
-        syncExchanges();
-        res.status(200).send();
+        const id = req.params.id;
+        if(!ObjectID.isValid(id)){
+            res.status(400).send({message:'Id is not valid'});    
+        }
+        const message = await syncExchange(id);
+        if (message.e){
+            res.status(400).send(message);    
+        } else{
+            res.status(200).send(message);
+        }        
     } catch(e){
         res.status(400).send(e);
     }

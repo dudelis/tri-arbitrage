@@ -44,6 +44,7 @@ exchangeRouter.post('/', (req, res)=>{
         ccxt_id: req.body.ccxt_id,
         localCurrency: req.body.localCurrency,
         includeIntoQuery: req.body.includeIntoQuery,
+        symbols: req.body.symbols,
         createdAt: new Date().getTime(),
         updatedAt: new Date().getTime()
     });

@@ -19,6 +19,7 @@ class ExchangeForm extends Component {
         this.onSaveClick = this.onSaveClick.bind(this);
         this.onDropdownChange=this.onDropdownChange.bind(this);
         this.onSelectChange = this.onSelectChange.bind(this);
+        this.handleValidation = this.handleValidation.bind(this);
         this.state ={
             name: props.exchange ? props.exchange.name : '',
             ccxt_id: props.exchange ? props.exchange.ccxt_id:'',
@@ -53,8 +54,29 @@ class ExchangeForm extends Component {
         exchange[id] = value;
         this.setState(exchange);
     }
+    handleValidation(){
+        let result = true;
+        if (!this.state.ccxt_id){
+            this.refs['ccxt_id'].control.classList.add('is-invalid');
+            result = false;
+        }
+        if (!this.state.name){
+            result = false;
+        }
+        if (!this.state.localCurrency){
+            result = false;
+        }
+
+        return result;
+
+    }
     onSaveClick(e){
         e.preventDefault();
+
+        if(!this.handleValidation()){
+            return;
+        }
+        
         if (this.props.exchange){
             this.props.onSubmit(this.props.exchange._id, {
                 name: this.state.name,
@@ -93,6 +115,7 @@ class ExchangeForm extends Component {
                             clearable = {true}
                             onChange={this.onSelectChange}
                             value={this.state.ccxt_id}
+                            ref="ccxt_id"
                         />
                     </Col>
                 </FormGroup>
@@ -105,7 +128,9 @@ class ExchangeForm extends Component {
                             id="name"
                             placeholder="Exchange Display Name"
                             value={this.state.name}
-                            onChange={this.onPropertyChange} />
+                            onChange={this.onPropertyChange}
+                            ref="name"
+                        />
                     </Col>
                 </FormGroup>
                 
@@ -118,7 +143,9 @@ class ExchangeForm extends Component {
                             id="localCurrency"
                             placeholder="Local Currency" 
                             value={this.state.localCurrency}
-                            onChange={this.onPropertyChange} />
+                            onChange={this.onPropertyChange}
+                            ref="localCurrency"
+                        />
                     </Col>
                 </FormGroup>
                 <FormGroup row>
@@ -138,7 +165,7 @@ class ExchangeForm extends Component {
                 <FormGroup row>
                     <Label sm={3} for="symbols">Symbols</Label>
                     <Col sm={9}>
-                        <Select.Creatable
+                        <Select
                             multi={true}
                             onChange={this.onDropdownChange}
                             value={this.state.dropdownSymbols}
