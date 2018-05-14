@@ -3,6 +3,12 @@ import { connect } from 'react-redux';
 import { getExchanges } from '../../actions/exchanges';
 import { Button, Container, Row, Col } from 'reactstrap';
 
+//addButtonClick
+//editButtonClick
+//getExchanges
+//syncExchange
+
+
 class Toolbar extends Component {
     render(){
         return (
@@ -33,6 +39,7 @@ class Toolbar extends Component {
                             outline
                             color="primary"
                             disabled={this.props.exchangeId ? false : true }
+                            onClick={this.props.syncExchangeButtonClick}
                         >
                             <i className="fa fa-cloud-download"></i>
                             {'\u00A0'}Sync Exchange

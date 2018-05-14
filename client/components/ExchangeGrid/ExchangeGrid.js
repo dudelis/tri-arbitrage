@@ -4,10 +4,14 @@ import ReactDataGrid from 'react-data-grid';
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 
 import { getExchanges, setSelectedItems, deleteExchange, sortExchanges } from '../../actions/exchanges';
+import { syncExchange, clearMessage } from './../../actions/aggregator';
 import ModalDelete from './ModalDelete';
+import ModalMessage from './../ModalMessage/ModalMessage';
 import ExchangeAddModal from './ExchangeAddModal';
 import ExchangeEditModal from './ExchangeEditModal';
 import Toolbar from './Toolbar';
+
+
 
 
 class ExchangeGrid extends Component {
@@ -18,6 +22,7 @@ class ExchangeGrid extends Component {
         this.toggleModalEdit = this.toggleModalEdit.bind(this);
         this.getCellActions = this.getCellActions.bind(this);
         this.confirmModalDelete = this.confirmModalDelete.bind(this);
+        this.syncExchange = this.syncExchange.bind(this);
         const _columns = [
             { key: 'name', name: 'Name', sortable:true},
             { key: 'ccxt_id', name: 'CCXT-ID', sortable:true },
@@ -37,7 +42,8 @@ class ExchangeGrid extends Component {
             modalDelete: false,
             modalEdit: false,
             deleteId: '',
-            exchangeId:''
+            exchangeId:'',
+            syncExchangeModal:false
         };
     };     
     componentWillMount(){
@@ -45,12 +51,10 @@ class ExchangeGrid extends Component {
     };
     onRowsSelected = (rows, idx) => {
         const selectedItems = [];
-        selectedItems.push(rows[0].row._id); // = this.props.exchanges.selectedItems.concat(rows.map(r => r.row._id));
+        selectedItems.push(rows[0].row._id);
         this.props.setSelectedItems(selectedItems);
     };
     onRowsDeselected = (rows) => {
-        // let rowIds = rows.map(r=> r.row._id);
-        // const selectedItems = this.props.exchanges.selectedItems.filter((id) => rowIds.indexOf(id)=== -1);
         this.props.setSelectedItems([]);
     };
 
@@ -103,6 +107,9 @@ class ExchangeGrid extends Component {
         const data = sortDirection === 'NONE' ? this.props.exchanges.data.slice(0) : this.props.exchanges.data.sort(comparer);
         this.props.sortExchanges(data);
     };
+    syncExchange(){
+        this.props.syncExchange(this.props.exchanges.selectedItems[0]);
+    }
     
     render() {
         return  (
@@ -111,6 +118,7 @@ class ExchangeGrid extends Component {
                     addButtonClick={this.toggleModalEdit}
                     editButtonClick={this.toggleModalEdit}
                     toggleModalEdit={this.toggleModalEdit}
+                    syncExchangeButtonClick={this.syncExchange}
                     exchangeId={this.props.exchanges.selectedItems[0]}/>
                 <ReactDataGrid
                     rowKey="_id"
@@ -150,19 +158,30 @@ class ExchangeGrid extends Component {
                         toggle={this.toggleModalEdit}
                     />                    
                 }
+                {this.props.aggregator.message &&
+                    <ModalMessage
+                        title="Message"
+                        body={this.props.aggregator.message}
+                        show={!!this.props.aggregator.message}
+                        handleClose={this.props.clearMessage}
+                    />
+                }
             </div>
         );
       }
 }
 
 const mapStateToProps = (state, props) =>({
-    exchanges: state.exchanges
+    exchanges: state.exchanges,
+    aggregator: state.aggregator
 });
 const mapDispatchToProps = (dispatch, props) =>({
     getExchanges : () => dispatch(getExchanges()),
     setSelectedItems : (selectedItems) => dispatch(setSelectedItems(selectedItems)),
     deleteExchange: (id) => dispatch(deleteExchange(id)),
-    sortExchanges: (data) => dispatch(sortExchanges(data))
+    sortExchanges: (data) => dispatch(sortExchanges(data)),
+    syncExchange: (id)=>dispatch(syncExchange(id)),
+    clearMessage: ()=>dispatch(clearMessage())
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(ExchangeGrid);
