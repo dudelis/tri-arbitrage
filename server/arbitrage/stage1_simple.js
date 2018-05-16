@@ -4,13 +4,12 @@
 const { Ticker } = require('./../models/ticker');
 const { Fiat } = require('./../models/fiat');
 const logger = require('../../utils/logger');
-const helper = require('./helper');
+const helper = require('./arbitrage-helper');
 
 const baseFiat = 'USD'
 
-const getConvertedTickers  = async (baseCrypto)=>{
+const getConvertedTickers  = async (base = 'BTC')=>{
     try{
-        let base = baseCrypto ? baseCrypto : 'BTC';
         const tickers = await Ticker.getArbitrageTickers(base);
 
         const fiats = await Fiat.getLatestFiats();
@@ -41,46 +40,37 @@ const getConvertedTickers  = async (baseCrypto)=>{
 const getArbitrageTable = async (base) =>{
     try {
         const convertedTickers = await getConvertedTickers(base);
-        convertedTickers.sort(function(a,b){
-            if(a.exchangeName.toLowerCase() < b.exchangeName.toLowerCase()) return -1;
-            if(a.exchangeName.toLowerCase() > b.exchangeName.toLowerCase()) return 1;
-            return 0;
-        });
-        //creating columns
-        const columns = [{key: 'name', name: 'Exchanges'}];
-        convertedTickers.forEach(item=>{
-            columns.push({key: item.exchangeId, name: item.exchangeName});
-        });
-        const rows = [];
-        convertedTickers.forEach(row => {
-            const rowObj = {};
-            rowObj['name'] = row.exchangeName;
-            const bid = row.bid;
-            convertedTickers.forEach(col=>{
-                if (row.exchangeId === col.exchangeId){
-                    rowObj[col.exchangeId] = '-';    
-                } else{               
-                    const arbitrage = helper.calculateArbitrage(bid, col.ask);
-                    rowObj[col.exchangeId] = helper.roundNumber(arbitrage, 2);
-                }
-            });
-            rows.push(rowObj);
-        });
-        return {
-            columns,
-            rows
-        }
+        const result = helper.buildArbitrageTable(convertedTickers);
+        // convertedTickers.sort(function(a,b){
+        //     if(a.exchangeName.toLowerCase() < b.exchangeName.toLowerCase()) return -1;
+        //     if(a.exchangeName.toLowerCase() > b.exchangeName.toLowerCase()) return 1;
+        //     return 0;
+        // });
+        // //creating columns
+        // const columns = [{key: 'name', name: 'Exchanges'}];
+        // convertedTickers.forEach(item=>{
+        //     columns.push({key: item.exchangeId, name: item.exchangeName});
+        // });
+        // const rows = [];
+        // convertedTickers.forEach(row => {
+        //     const rowObj = {};
+        //     rowObj['name'] = row.exchangeName;
+        //     const bid = row.bid;
+        //     convertedTickers.forEach(col=>{
+        //         if (row.exchangeId === col.exchangeId){
+        //             rowObj[col.exchangeId] = '-';    
+        //         } else{               
+        //             const arbitrage = helper.calculateArbitrage(bid, col.ask);
+        //             rowObj[col.exchangeId] = helper.roundNumber(arbitrage, 2);
+        //         }
+        //     });
+        //     rows.push(rowObj);
+        // });
+        return result;
     } catch(e){
-        logger.error(`Error getting the Arbitrage table for ${base}`, {base, e});
+        logger.error(`Simple - Error getting the Arbitrage table for ${base}`, {base, e});
     }
 }
-
-// const check = ()=>{    
-//     getArbitrageTable().then((res) =>{
-//         console.log(res);
-//     });
-// }
-// check();
 
 module.exports = {getArbitrageTable, getConvertedTickers}
 

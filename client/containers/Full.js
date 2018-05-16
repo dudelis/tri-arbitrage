@@ -12,6 +12,7 @@ import FiatView from './../views/admin/FiatView';
 import LogView from './../views/admin/LogView';
 import TickerView from './../views/admin/TickerView';
 import SimpleArbitrageView from './../views/arbitrage/SimpleArbitrageView';
+import WeightedArbitrageView from './../views/arbitrage/WeightedArbitrageView';
 
 
 class Full extends Component {
@@ -30,6 +31,7 @@ class Full extends Component {
                                 <Route path="/admin/ticker" name="Tickers" component={TickerView}/>
                                 <Route path="/admin/log" name="Logs" component={LogView}/>
                                 <Route path="/arbitrage/simple" name="Simple" component={SimpleArbitrageView}/>
+                                <Route path="/arbitrage/weighted" name="Weighted" component={WeightedArbitrageView}/>
                                 <Redirect from="/" to="/dashboard"/>
                             </Switch>
                         </Container>

@@ -22,6 +22,48 @@ var orderbookSchema = new mongoose.Schema({
     }
 });
 
+orderbookSchema.statics.getArbitrageOrderBooks = async function(base){
+    const regex = new RegExp(`^${base}`); //getting all the tickers for a certain CryptoCurrency
+    return this.aggregate([
+        {
+            $sort:{_id: 1}
+        },
+        {
+            $group:{
+                _id: "$_exchange",
+                _orderbookid: {$last: '$_id'},
+                timestamp: {$last: '$timestamp'},
+                createdAt: {$last: '$createdAt'},
+                bids: {$last: '$bids'},
+                asks: {$last: '$asks'},
+                symbol: {$last: '$symbol'}
+        }},
+        { 
+            $lookup:{
+                from: "exchanges",
+                localField: "_id",
+                foreignField: "_id",
+                as: "exchange"
+        }},
+        {
+            "$match":{
+                $and:[{
+                    'exchange.includeIntoQuery': true,
+                },{
+                    symbol: regex
+                }
+            ]
+            }
+        },
+        {
+            $addFields:{
+                exchange: {$arrayElemAt: ['$exchange', 0]}
+            }
+        }
+    ]
+    );
+}
+
 var Orderbook = mongoose.model('Orderbook', orderbookSchema);
 
 module.exports = {Orderbook};

@@ -17,6 +17,10 @@ export default {
           {
             name: 'Simple',
             url: '/arbitrage/simple'
+          },
+          {
+            name: 'Weighted',
+            url: '/arbitrage/weighted'
           }
         ]
       },

@@ -50,7 +50,7 @@ tickerSchema.statics.getArbitrageTickers = async function(base) {
     const regex = new RegExp(`^${base}`); //getting all the tickers for a certain CryptoCurrency
     return this.aggregate([
         {
-            $sort: {createdAt: 1}
+            $sort: {_id: 1}
         },
         {
             $group:{
