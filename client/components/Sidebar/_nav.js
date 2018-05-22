@@ -19,8 +19,12 @@ export default {
             url: '/arbitrage/simple'
           },
           {
-            name: 'Weighted',
+            name: 'Weighted Average',
             url: '/arbitrage/weighted'
+          },
+          {
+            name: 'Accumulated',
+            url: '/arbitrage/accumulated'
           }
         ]
       },

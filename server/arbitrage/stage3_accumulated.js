@@ -12,14 +12,13 @@ const baseFiat = 'USD';
 const getConvertedOrderbook = async (base='BTC', volume = 0)=>{
     try{
         const ordersbooks = await Orderbook.getArbitrageOrderBooks(base);
-        const averageOrderbooks = ordersbooks.map((item) =>{
-            item.avgask = _calculateAveragePrice(volume, item.asks);
-            item.avgbid = _calculateAveragePrice(volume, item.bids);
+        const accumulatedOrderbooks = ordersbooks.map((item) =>{
+            item.accask = _calculateAccumulatedAmount(volume, item.asks);
+            item.accbid = _calculateAccumulatedAmount(volume, item.bids);
             return item;
         });
-        
         const fiats = await Fiat.getLatestFiats();        
-        const convertedOrderbooks = averageOrderbooks.map((ob)=>{
+        const convertedOrderbooks = accumulatedOrderbooks.map((ob)=>{
             const quoteCurrency = ob.symbol.split('/')[1]; //getting the quote currency
             let rate = 1;
             if (quoteCurrency !== baseFiat){
@@ -31,10 +30,10 @@ const getConvertedOrderbook = async (base='BTC', volume = 0)=>{
             return {
                 timestamp : ob.timestamp,
                 createdAt: ob.createdAt,
-                bid: ob.avgbid / rate,
-                ask: ob.avgask / rate,
-                avgask: ob.avgask,
-                avgbid: ob.avgbid,
+                bid: ob.accask / rate,
+                ask: ob.accbid / rate,
+                accask: ob.accask,
+                accbid: ob.accbid,
                 symbol: `${base}/${baseFiat}`,
                 exchangeName: ob.exchange.name,
                 exchangeId: ob.exchange.ccxt_id
@@ -55,11 +54,10 @@ const getArbitrageTable = async (base, volume)=>{
     }
 }
 
-const _calculateAveragePrice = (volume, askbid)=>{
+const _calculateAccumulatedAmount = (volume, askbid)=>{
     let result = 0;
     if (_isVolumeEnough(volume, askbid)){
-        const reducedAskBid = _reduceAskBid(volume, askbid);
-        result = helper.weightedMean(reducedAskBid);
+        result = helper.absoluteAmount(askbid, volume);
     }
     return result;
 }
@@ -69,16 +67,15 @@ const _isVolumeEnough = (volume, askbid)=>{
     },0);
     return containedVolume >= volume;
 }
-const _reduceAskBid = (volume, askbid)=>{
-    const reducedArr = askbid.reduce((acc, item)=>{
-        if (acc.vol <= volume){
-            acc.askbids.push(item);
-            acc.vol = acc.vol + item[1];
-        }
-        return acc;
-    },{askbids:[], vol: 0});
-    return reducedArr.askbids;
-}
 
+const test = async ()=>{
+    try{
+        const t = await getConvertedOrderbook('BTC', 10);
+        console.log(JSON.stringify(t, undefined, 2));
+    } catch(e){
+        console.log(e);
+    }
+}
+test();
 
 module.exports = {getArbitrageTable, getConvertedOrderbook}

@@ -2,6 +2,7 @@ const arbitrageRouter = require('express').Router();
 
 const simple = require('./../../arbitrage/stage1_simple');
 const weighted = require('./../../arbitrage/stage2_weighted');
+const accumulated = require('./../../arbitrage/stage3_accumulated');
 
 arbitrageRouter.get('/simple/:crypto', async (req, res)=>{
     try{
@@ -38,7 +39,6 @@ arbitrageRouter.get('/convertedorderbook/:crypto/:volume', async (req, res)=>{
     try{
         const cc = req.params.crypto;
         const vol = parseFloat(req.params.volume);
-        console.log(vol);
         const data = await weighted.getConvertedOrderbook(cc, vol);
         res.send({data});
     }catch(e){
@@ -46,6 +46,26 @@ arbitrageRouter.get('/convertedorderbook/:crypto/:volume', async (req, res)=>{
     }
 });
 
+arbitrageRouter.get('/accumulated/:crypto/:volume', async (req, res)=>{
+    try{
+        const cc = req.params.crypto;
+        const vol = parseFloat(req.params.volume);
+        const arbitrageTable = await accumulated.getArbitrageTable(cc, vol);
+        res.send({arbitrageTable});
+    }catch(e){
+        res.status(400).send(e);
+    }
+});
 
+arbitrageRouter.get('/acc_convertedorderbook/:crypto/:volume', async (req, res)=>{
+    try{
+        const cc = req.params.crypto;
+        const vol = parseFloat(req.params.volume);
+        const data = await accumulated.getConvertedOrderbook(cc, vol);
+        res.send({data});
+    }catch(e){
+        res.status(400).send(e);
+    }
+});
 
 module.exports = { arbitrageRouter }

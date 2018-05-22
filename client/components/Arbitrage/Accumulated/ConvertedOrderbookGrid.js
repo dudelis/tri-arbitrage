@@ -5,10 +5,10 @@ import { Button, InputGroup, InputGroupAddon, Input } from 'reactstrap';
 import moment from 'moment';
 import { ClipLoader } from 'react-spinners';
 
-import { getConvertedOrderbook, sortConvertedOrderbook, sortConvertedTickers } from './../../../actions/arbitrage';
+import { getAccumulatedConvertedOrderbook, sortAccConvertedOrderbook } from './../../../actions/arbitrage';
 import DataGridToolbar from './../../DataGridToolbar/DataGridToolbar';
 
-class ConvertedOrderbookGrid extends Component {
+class AccConvertedOrderbookGrid extends Component {
     constructor(props, context) {
         super(props, context);
         this.refreshGrid = this.refreshGrid.bind(this);
@@ -45,8 +45,8 @@ class ConvertedOrderbookGrid extends Component {
             return (a[sortColumn] < b[sortColumn]) ? 1 : -1;
           }
         };    
-        const data = sortDirection === 'NONE' ? this.props.arbitrage.convertedorderbook.slice(0) : this.props.arbitrage.convertedorderbook.sort(comparer);
-        this.props.sortConvertedOrderbook(data);
+        const data = sortDirection === 'NONE' ? this.props.arbitrage.accconvertedorderbook.slice(0) : this.props.arbitrage.accconvertedorderbook.sort(comparer);
+        this.props.sortAccConvertedOrderbook(data);
     };
     handleInputChange(e){
         this.setState({volume:e.target.value});
@@ -58,10 +58,10 @@ class ConvertedOrderbookGrid extends Component {
     }
     refreshGrid(){
         this.setState({loading:true});
-        this.props.getConvertedOrderbook(this.state.cryptocurrency, this.state.volume, ()=>{this.setState({loading:false})});
+        this.props.getAccumulatedConvertedOrderbook(this.state.cryptocurrency, this.state.volume, ()=>{this.setState({loading:false})});
     }
     rowGetter = (i) => {
-        return this.props.arbitrage.convertedorderbook[i];
+        return this.props.arbitrage.accconvertedorderbook[i];
     };
     
     render() {
@@ -76,7 +76,7 @@ class ConvertedOrderbookGrid extends Component {
                 <ReactDataGrid
                     columns= {this.state.columns}
                     rowGetter= {this.rowGetter}
-                    rowsCount={this.props.arbitrage.convertedorderbook.length}
+                    rowsCount={this.props.arbitrage.accconvertedorderbook.length}
                     onGridSort={this.handleGridSort}
                     minHeight={800}
                     toolbar={
@@ -104,8 +104,8 @@ const mapStateToProps = (state, props) =>({
     arbitrage: state.arbitrage
 });
 const mapDispatchToProps = (dispatch, props) =>({
-    getConvertedOrderbook : (crypt, vol, callback) => dispatch(getConvertedOrderbook(crypt, vol, callback)),
-    sortConvertedOrderbook: (data) => dispatch(sortConvertedOrderbook(data)),
+    getAccumulatedConvertedOrderbook : (crypt, vol, callback) => dispatch(getAccumulatedConvertedOrderbook(crypt, vol, callback)),
+    sortAccConvertedOrderbook: (data) => dispatch(sortAccConvertedOrderbook(data)),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(ConvertedOrderbookGrid);
+export default connect(mapStateToProps, mapDispatchToProps)(AccConvertedOrderbookGrid);

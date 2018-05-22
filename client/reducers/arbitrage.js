@@ -8,8 +8,13 @@ const defaultState = {
         columns:[],
         rows:[]
     },
+    accumulatedArbitrageTable:{
+        columns:[],
+        rows:[]
+    },
     convertedtickers:[],
-    convertedorderbook:[]
+    convertedorderbook:[],
+    accconvertedorderbook:[]
 };
 export default (state = defaultState, action) => {
     switch (action.type){
@@ -29,6 +34,14 @@ export default (state = defaultState, action) => {
             return {...state, convertedtickers: action.convertedtickers}
         case 'SORT_CONVERTED_ORDERBOOK':
             return {...state, convertedorderbook: action.convertedorderbook}
+        case 'GET_ACCUMULATED_ARBITRAGE':
+            const accumulatedArbitrageTable = action.accumulatedArbitrageTable.arbitrageTable;
+            return {...state, accumulatedArbitrageTable}
+        case 'GET_ACCUMULATED_CONVERTED_ORDERBOOK':
+            const accconvertedorderbook = action.accconvertedorderbook;
+            return {...state, accconvertedorderbook}
+        case 'SORT_ACCUMULATED_CONVERTED_ORDERBOOK':
+            return {...state, accconvertedorderbook: action.accconvertedorderbook}
         default:
             return state;
     }

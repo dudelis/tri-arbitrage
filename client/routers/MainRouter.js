@@ -18,6 +18,7 @@ const AppRouter = () =>(
                 <Route path="/admin/ticker" component={Full} exact/>
                 <Route path="/arbitrage/simple" component={Full} exact/>
                 <Route path="/arbitrage/weighted" component={Full} exact/>
+                <Route path="/arbitrage/accumulated" component={Full} exact/>
                 <Route component={Page404} />
             </Switch>        
     </HashRouter>

@@ -60,8 +60,33 @@ const weightedMean = (askbid) => {
     }, [0, 0]);
     return result[0] / result[1];
 }
+const absoluteAmount = (askbid, volume) => {
+    const result = askbid.reduce((prev, cur)=>{
+        if (prev.totalVolume < volume){
+            const leftOver = volume - prev.totalVolume;
+            if (leftOver>=cur[1]){
+                return {
+                    totalAmount: prev.totalAmount + (cur[0]*cur[1]),
+                    totalVolume: prev.totalVolume + cur[1]
+                }
+            }else{
+                return {
+                    totalAmount: prev.totalAmount + (cur[0]*leftOver),
+                    totalVolume: prev.totalVolume + leftOver
+                }
+            }
+        } else{
+            return {
+                totalAmount: prev.totalAmount,
+                totalVolume: prev.totalVolume
+            };
+        }
+    }, {totalAmount: 0, totalVolume: 0});
+    return result.totalAmount;
+}
 
 module.exports = {
+    absoluteAmount,
     buildArbitrageTable,
     calculateArbitrage,
     roundNumber,

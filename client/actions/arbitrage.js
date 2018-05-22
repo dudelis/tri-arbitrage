@@ -39,6 +39,29 @@ export const getConvertedOrderbook = (crypt, vol, callback)=> {
         })
     }
 }
+export const getAccumulatedArbitrageTable = (crypt, vol, callback)=> {
+    return (dispatch) => {
+        axios.get(`/api/v0/arbitrage/accumulated/${crypt}/${vol}`).then((res)=>{
+            const arbitrage = res.data;
+            dispatch({type: 'GET_ACCUMULATED_ARBITRAGE', accumulatedArbitrageTable:arbitrage});
+            if (callback){
+                callback();
+            }
+        })
+    }
+}
+
+export const getAccumulatedConvertedOrderbook = (crypt, vol, callback)=> {
+    return (dispatch) => {
+        axios.get(`/api/v0/arbitrage/acc_convertedorderbook/${crypt}/${vol}`).then((res)=>{
+            const accconvertedorderbook = res.data.data;
+            dispatch({type: 'GET_ACCUMULATED_CONVERTED_ORDERBOOK', accconvertedorderbook});
+            if (callback){
+                callback();
+            }
+        })
+    }
+}
 export const sortConvertedTickers = (data) =>{
     return (dispatch) => {
         dispatch({type:'SORT_CONVERTED_TICKERS', convertedtickers:data});
@@ -47,5 +70,10 @@ export const sortConvertedTickers = (data) =>{
 export const sortConvertedOrderbook = (data) =>{
     return (dispatch) => {
         dispatch({type:'SORT_CONVERTED_ORDERBOOK', convertedorderbook:data});
+    }
+}
+export const sortAccConvertedOrderbook = (data) =>{
+    return (dispatch) => {
+        dispatch({type:'SORT_ACCUMALTED_CONVERTED_ORDERBOOK', accconvertedorderbook:data});
     }
 }
