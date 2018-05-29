@@ -28,7 +28,7 @@ class ConvertedOrderbookGrid extends Component {
         this.state ={
             cryptocurrency: 'BTC',
             columns,
-            volume: null,
+            volume: 10000,
             loading:false
         };
         
@@ -50,6 +50,7 @@ class ConvertedOrderbookGrid extends Component {
     };
     handleInputChange(e){
         this.setState({volume:e.target.value});
+        this.refreshGrid();
     }
     handleKeyPress(e){
         if (e.key ==='Enter'){
@@ -80,17 +81,19 @@ class ConvertedOrderbookGrid extends Component {
                     onGridSort={this.handleGridSort}
                     minHeight={800}
                     toolbar={
-                        <div>
+                        <div style={{width:'30%'}}>
                             <InputGroup>
-                                <InputGroupAddon addonType="prepend">Volume:</InputGroupAddon>
-                                <Input 
-                                    placeholder="Enter volume of crypto currency for arbitrage"
-                                    value={this.state.volume}
-                                    onChange={this.handleInputChange} 
-                                    type="number"
-                                    onKeyPress={this.handleKeyPress}
-                                />
-                                <InputGroupAddon addonType="append"><Button color="secondary" onClick={this.refreshGrid}>Refresh</Button></InputGroupAddon>
+                                <InputGroupAddon addonType="prepend">Arbitrage amount:</InputGroupAddon>
+                                    <Input
+                                        value={this.state.volume}
+                                        onChange={this.handleInputChange} 
+                                        type="select"
+                                    >
+                                        <option>10000</option>
+                                        <option>25000</option>
+                                        <option>50000</option>
+                                    </Input>
+                                <InputGroupAddon addonType="append">USD</InputGroupAddon>
                             </InputGroup>
                         </div>
                     }

@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import { connect } from 'react-redux';
 import ReactDataGrid from 'react-data-grid';
-import { Button, Input, InputGroup, InputGroupAddon } from 'reactstrap';
+import { Button, Input, InputGroup, InputGroupAddon, Col } from 'reactstrap';
 import { ClipLoader } from 'react-spinners';
 
 import { getWeightedArbitrageTable } from './../../../actions/arbitrage';
@@ -14,7 +14,7 @@ class WeightedArbitrageGrid extends Component {
         this.handleKeyPress = this.handleKeyPress.bind(this);
         this.state ={
             cryptocurrency: 'BTC',
-            volume: null,
+            volume: 10000,
             loading: false
         };        
     }
@@ -24,6 +24,7 @@ class WeightedArbitrageGrid extends Component {
     };
     handleInputChange(e){
         this.setState({volume:e.target.value});
+        this.refreshGrid();
     }
     refreshGrid(){
         this.setState({loading:true});
@@ -53,17 +54,19 @@ class WeightedArbitrageGrid extends Component {
                     rowsCount={this.props.arbitrage.weightedArbitrageTable.rows.length}
                     minHeight={800}
                     toolbar={
-                        <div>
+                        <div style={{width:'30%'}}>
                             <InputGroup>
-                                <InputGroupAddon addonType="prepend">Volume:</InputGroupAddon>
-                                <Input 
-                                    placeholder="Enter volume of crypto currency for arbitrage"
-                                    value={this.state.volume}
-                                    onChange={this.handleInputChange} 
-                                    type="number"
-                                    onKeyPress={this.handleKeyPress}
-                                />
-                                <InputGroupAddon addonType="append"><Button color="secondary" onClick={this.refreshGrid}>Refresh</Button></InputGroupAddon>
+                                <InputGroupAddon addonType="prepend">Arbitrage amount:</InputGroupAddon>
+                                    <Input
+                                        value={this.state.volume}
+                                        onChange={this.handleInputChange} 
+                                        type="select"
+                                    >
+                                        <option>10000</option>
+                                        <option>25000</option>
+                                        <option>50000</option>
+                                    </Input>
+                                <InputGroupAddon addonType="append">USD</InputGroupAddon>
                             </InputGroup>
                         </div>
                     }

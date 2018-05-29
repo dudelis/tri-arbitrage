@@ -1,5 +1,3 @@
-// require('./../../config/index');
-// const {mongoose} = require('./../db/mongoose');
 
 const { Ticker } = require('./../models/ticker');
 const { Fiat } = require('./../models/fiat');
@@ -41,31 +39,6 @@ const getArbitrageTable = async (base) =>{
     try {
         const convertedTickers = await getConvertedTickers(base);
         const result = helper.buildArbitrageTable(convertedTickers);
-        // convertedTickers.sort(function(a,b){
-        //     if(a.exchangeName.toLowerCase() < b.exchangeName.toLowerCase()) return -1;
-        //     if(a.exchangeName.toLowerCase() > b.exchangeName.toLowerCase()) return 1;
-        //     return 0;
-        // });
-        // //creating columns
-        // const columns = [{key: 'name', name: 'Exchanges'}];
-        // convertedTickers.forEach(item=>{
-        //     columns.push({key: item.exchangeId, name: item.exchangeName});
-        // });
-        // const rows = [];
-        // convertedTickers.forEach(row => {
-        //     const rowObj = {};
-        //     rowObj['name'] = row.exchangeName;
-        //     const bid = row.bid;
-        //     convertedTickers.forEach(col=>{
-        //         if (row.exchangeId === col.exchangeId){
-        //             rowObj[col.exchangeId] = '-';    
-        //         } else{               
-        //             const arbitrage = helper.calculateArbitrage(bid, col.ask);
-        //             rowObj[col.exchangeId] = helper.roundNumber(arbitrage, 2);
-        //         }
-        //     });
-        //     rows.push(rowObj);
-        // });
         return result;
     } catch(e){
         logger.error(`Simple - Error getting the Arbitrage table for ${base}`, {base, e});

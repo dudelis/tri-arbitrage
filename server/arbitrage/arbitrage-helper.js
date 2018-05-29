@@ -1,3 +1,27 @@
+const absoluteAmount = (askbid, volume) => {
+    const result = askbid.reduce((prev, cur)=>{
+        if (prev.totalVolume < volume){
+            const leftOver = volume - prev.totalVolume;
+            if (leftOver>=cur[1]){
+                return {
+                    totalAmount: prev.totalAmount + (cur[0]*cur[1]),
+                    totalVolume: prev.totalVolume + cur[1]
+                }
+            }else{
+                return {
+                    totalAmount: prev.totalAmount + (cur[0]*leftOver),
+                    totalVolume: prev.totalVolume + leftOver
+                }
+            }
+        } else{
+            return {
+                totalAmount: prev.totalAmount,
+                totalVolume: prev.totalVolume
+            };
+        }
+    }, {totalAmount: 0, totalVolume: 0});
+    return result.totalAmount;
+}
 
 const buildArbitrageTable = (convertedData)=>{
     convertedData.sort(function(a,b){
@@ -38,8 +62,9 @@ const buildArbitrageTable = (convertedData)=>{
 }
 
 const calculateArbitrage = (bid, ask) =>{
-    return (ask / bid - 1) * 100;
+    return (bid / ask - 1) * 100;
 }
+
 const roundNumber = (number, precision) => {
     const shift = function (number, precision, reverseShift) {
         if (reverseShift) {
@@ -52,37 +77,13 @@ const roundNumber = (number, precision) => {
 }
 
 const weightedMean = (askbid) => {
-    const result = askbid.map(function (item) {
+       const result = askbid.map(function (item) {
         const sum = item[0] * item[1];
         return [sum, item[1]];
     }).reduce(function (p, c) {
         return [p[0] + c[0], p[1] + c[1]];
     }, [0, 0]);
     return result[0] / result[1];
-}
-const absoluteAmount = (askbid, volume) => {
-    const result = askbid.reduce((prev, cur)=>{
-        if (prev.totalVolume < volume){
-            const leftOver = volume - prev.totalVolume;
-            if (leftOver>=cur[1]){
-                return {
-                    totalAmount: prev.totalAmount + (cur[0]*cur[1]),
-                    totalVolume: prev.totalVolume + cur[1]
-                }
-            }else{
-                return {
-                    totalAmount: prev.totalAmount + (cur[0]*leftOver),
-                    totalVolume: prev.totalVolume + leftOver
-                }
-            }
-        } else{
-            return {
-                totalAmount: prev.totalAmount,
-                totalVolume: prev.totalVolume
-            };
-        }
-    }, {totalAmount: 0, totalVolume: 0});
-    return result.totalAmount;
 }
 
 module.exports = {
