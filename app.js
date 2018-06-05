@@ -5,19 +5,12 @@ const async = require('async');
 
 const server = require('./server/server');
 const logger = require('./utils/logger');
-const cryptoAggregator = require('./server/aggregator/crypto-aggregator');
-const fiatAggregator = require('./server/aggregator/fiat-aggregator');
+const aggregator = require('./server/aggregator');
 
 async.parallel([
-    // function startCryptoAggregator(callback){
-    //   cryptoAggregator.start(callback);
-    // },
-    // function startFiatAggregator(callback){
-    //   fiatAggregator.start(callback);
-    // },
-    // function log(callback){
-    //   console.log('hello');
-    // },
+    function (callback){
+      aggregator.start(callback);
+    },
     function startApp(callback){
       server.start();
     }

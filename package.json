@@ -38,6 +38,7 @@
     "moment": "^2.21.0",
     "mongodb": "^3.0.2",
     "mongoose": "^5.0.6",
+    "paralleljs": "^0.2.1",
     "prop-types": "^15.6.1",
     "react": "^16.2.0",
     "react-data-grid": "^3.0.11",

@@ -1,3 +1,5 @@
+const Parallel = require('paralleljs');
+
 const logger = require('./../../utils/logger');
 const {Exchange} = require('../models/exchange');
 const exchangeInitializer = require('./exchange-initializer');
@@ -18,7 +20,29 @@ const _startJob = async()=>{
         _timeoutId = setTimeout(_startJob, _interval);
     }
 }
+const syncExchanges = async()=>{
+    try{
+        logger.info(`${moduleName} - Sync job was started`, {moduleName});
+        var start = new Date();
+        const createdAt = new Date().getTime();
+        const exchanges = await Exchange.find({includeIntoQuery: true});
+        
+        // let parallel = new Parallel(exchanges);
+        // await parallel.map(_syncExchange);
+
+        for (let exchange of exchanges){
+            await _syncExchange(exchange, createdAt);
+        }
+        var end = new Date();
+        logger.info(`${exchanges.length} exchanges were queried for ${end-start} ms.`, {moduleName, start, end, duration: end - start})
+    } catch(e){
+        logger.error('Query exchanges error.', {moduleName, e})
+    }
+}
+
 const _syncExchange = async (exchange, createdAt)=>{
+    createdAt = createdAt || new Date().getTime();
+    console.log(createdAt);
     for (let symbol of exchange.symbols){
         await orderbookPlugin.syncItem(exchange, symbol, createdAt);
         await new Promise (resolve => setTimeout (resolve, _delay)); //rate limit to not be banned;
@@ -71,21 +95,7 @@ const syncExchange = async (id)=>{
         logger.error(msg.message, {exchange: exchange.ccxt_id, e})
     }
 }
-const syncExchanges = async()=>{
-    try{
-        logger.info(`${moduleName} - Sync job was started`, {moduleName});
-        var start = new Date();
-        const createdAt = new Date().getTime();
-        const exchanges = await Exchange.find({includeIntoQuery: true});
-        for (let exchange of exchanges){
-            await _syncExchange(exchange, createdAt);
-        }
-        var end = new Date();
-        logger.info(`${exchanges.length} exchanges were queried for ${end-start} ms.`, {moduleName, start, end, duration: end - start})
-    } catch(e){
-        logger.error('Query exchanges error.', {moduleName, e})
-    }
-}
+
 
 const setInterval = (num) =>{
     if (num > _minInterval){

@@ -21,10 +21,6 @@ export default {
           {
             name: 'Weighted Average',
             url: '/arbitrage/weighted'
-          },
-          {
-            name: 'Accumulated',
-            url: '/arbitrage/accumulated'
           }
         ]
       },
