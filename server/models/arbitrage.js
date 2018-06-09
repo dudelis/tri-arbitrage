@@ -12,29 +12,33 @@ var arbitrageSchema = new mongoose.Schema({
         ref: 'Exchange'
     },
     ask:{
-        type:Number
-    },
-    bid:{
-        type:Number
+        type: Number
     },
     askSymbol:{
         type: String
     },
+    bid:{
+        type: Number
+    },   
     bidSymbol:{
         type: String
     },
-    arbitrage:{
+    value:{
         type: Number,
         required: true
     },
-    timestamp:{
+    volume:{
         type: Number,
         required: true
     },
-    exchangeRate:{
-        type: Number
+    crypto:{
+        type: String,
+        required: true
+    },
+    createdAt:{
+        type: Number,
+        default: new Date.getTime()
     }
-
 });
 
 const Arbitrage = mongoose.model('Arbitrage', arbitrageSchema);

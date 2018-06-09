@@ -23,13 +23,23 @@ arbitrageRouter.get('/convertedtickers/:crypto', async (req, res)=>{
         res.status(400).send(e);
     }
 });
-
+//Weighted Arbitrage
 arbitrageRouter.get('/weighted/:crypto/:amount', async (req, res)=>{
     try{
         const crypt = req.params.crypto;
         const amount = parseFloat(req.params.amount);
         const arbitrageTable = await weighted.getArbitrageTable(crypt, amount);
         res.send({arbitrageTable});
+    }catch(e){
+        res.status(400).send(e);
+    }
+});
+arbitrageRouter.get('/weighted-arbitrage/:crypto/:amount', async (req, res)=>{
+    try{
+        const crypt = req.params.crypto;
+        const amount = parseFloat(req.params.amount);
+        const arbitrageList  = await weighted.getArbitrageList(crypt, amount);
+        res.send({arbitrageList});
     }catch(e){
         res.status(400).send(e);
     }

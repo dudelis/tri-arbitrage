@@ -24,8 +24,8 @@ const getConvertedOrderbook = async (base='BTC', amountLimit = 0)=>{
                 bid,
                 ask,
                 symbol: item.symbol,
-                exchangeName: item.exchange.name,
-                exchangeId: item.exchange.ccxt_id
+                exchange: item.exchange,
+                arbitragesymbol: `${base}/${baseFiat}`
             }
         });
         return convertedOrderbooks;
@@ -39,9 +39,19 @@ const getArbitrageTable = async (base, amountLimit)=>{
         const result = helper.buildArbitrageTable(convertedOrderbooks);
         return result;
     } catch(e){
-        logger.error(`Orderbook Weighted - Error getting the Arbitrage table for ${base}`, {base, e});
+        logger.error(`Arbitrage Weighted - Error getting the Arbitrage table for ${base}`, {base, e});
     }
 }
+const getArbitrageList = async (base, amountLimit) => {
+    try{
+        const convertedOrderbooks = await getConvertedOrderbook(base, amountLimit);
+        const arbitrageList = helper.getArbitrageList(convertedOrderbooks);
+        return arbitrageList;
+    } catch(e){
+        logger.error(`Arbitrage Weighted - Error getting the Arbitrage  for ${base}`, {base, e});
+    }
+}
+
 const _getQuoteCurrencyExchangeRate = (fiats, symbol)=>{
     const quoteCurrency = symbol.split('/')[1]; //getting the quote currency
     let rate = 1;
@@ -82,4 +92,4 @@ const _getReducedAskbid = (askbid, convertedAmount)=>{
 }
 
 
-module.exports = {getArbitrageTable, getConvertedOrderbook}
+module.exports = {getArbitrageTable,getArbitrageList, getConvertedOrderbook}

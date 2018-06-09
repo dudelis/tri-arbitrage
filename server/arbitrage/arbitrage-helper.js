@@ -25,30 +25,30 @@ const absoluteAmount = (askbid, volume) => {
 
 const buildArbitrageTable = (convertedData)=>{
     convertedData.sort(function(a,b){
-        if(a.exchangeName.toLowerCase() < b.exchangeName.toLowerCase()) return -1;
-        if(a.exchangeName.toLowerCase() > b.exchangeName.toLowerCase()) return 1;
+        if(a.exchange.name.toLowerCase() < b.exchange.name.toLowerCase()) return -1;
+        if(a.exchange.name.toLowerCase() > b.exchange.name.toLowerCase()) return 1;
         return 0;
     });
     //creating columns - Columns - Bids, Rows - Asks
     const columns = [{key: 'name', name: 'Bids   \\   Asks'}];
     convertedData.forEach(item=>{
         if (item.ask > 0){
-            columns.push({key: item.exchangeId, name: item.exchangeName});
+            columns.push({key: item.exchange.ccxt_id, name: item.exchange.name});
         }
     });
     const rows = [];
     convertedData.forEach(row => {
         if (row.bid > 0){
             const rowObj = {};
-            rowObj['name'] = row.exchangeName;
+            rowObj['name'] = row.exchange.name;
             const bid = row.bid;
             convertedData.forEach(col=>{
-                if (row.exchangeId === col.exchangeId){
-                    rowObj[col.exchangeId] = '-';    
+                if (row.exchange.ccxt_id === col.exchange.ccxt_id){
+                    rowObj[col.exchange.ccxt_id] = '-';    
                 } else{
                     if (col.ask>0){         
                         const arbitrage = calculateArbitrage(bid, col.ask);
-                        rowObj[col.exchangeId] = roundNumber(arbitrage, 2);
+                        rowObj[col.exchange.ccxt_id] = roundNumber(arbitrage, 2);
                     }
                 }
             });
@@ -59,6 +59,29 @@ const buildArbitrageTable = (convertedData)=>{
         columns,
         rows
     }
+}
+const getArbitrageList = (convertedData)=>{
+    const arbitrageList = [];
+    convertedData.forEach(askitem =>{
+        if (askitem.ask > 0){
+            convertedData.forEach(biditem =>{
+                if (askitem.exchange.ccxt_id !== biditem.exchange.ccxt_id){
+                    const item ={
+                        _askExchange: askitem.exchange._id,
+                        _bidExchange: biditem.exchange._id,
+                        ask: askitem.ask,
+                        bid: biditem. bid,
+                        askSymbol: askitem.symbol,
+                        bidSymbol: biditem.symbol,
+                        value: calculateArbitrage(biditem.bid, askitem.ask),
+                        arbitragesymbol: askitem.arbitragesymbol
+                    }
+                    arbitrageList.push(item);
+                }
+            })
+        }
+    })
+    return arbitrageList;
 }
 
 const calculateArbitrage = (bid, ask) =>{
@@ -90,6 +113,7 @@ module.exports = {
     absoluteAmount,
     buildArbitrageTable,
     calculateArbitrage,
+    getArbitrageList,
     roundNumber,
     weightedMean
 }

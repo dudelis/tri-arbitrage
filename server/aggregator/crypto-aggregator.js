@@ -1,4 +1,3 @@
-const Parallel = require('paralleljs');
 
 const logger = require('./../../utils/logger');
 const {Exchange} = require('../models/exchange');
