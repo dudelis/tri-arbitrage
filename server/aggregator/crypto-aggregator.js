@@ -1,4 +1,6 @@
 
+const async = require('async');
+
 const logger = require('./../../utils/logger');
 const {Exchange} = require('../models/exchange');
 const exchangeInitializer = require('./exchange-initializer');
@@ -12,7 +14,7 @@ const _minInterval = 60000; //Minimun interval is 1 min sec.
 let _timeoutId;
 let _delay = 2000; //2000 ms to not be banned by exchanges
 
-const _startJob = async()=>{
+const _startJob = ()=>{
     syncExchanges();
     if(_isRunning)
     {
@@ -26,14 +28,22 @@ const syncExchanges = async()=>{
         const createdAt = new Date().getTime();
         const exchanges = await Exchange.find({includeIntoQuery: true});
         
-        // let parallel = new Parallel(exchanges);
-        // await parallel.map(_syncExchange);
-
-        for (let exchange of exchanges){
-            await _syncExchange(exchange, createdAt);
-        }
-        var end = new Date();
-        logger.info(`${exchanges.length} exchanges were queried for ${end-start} ms.`, {moduleName, start, end, duration: end - start})
+        async.forEachOf(exchanges, function(value, key, callback) {
+            _syncExchange(value).then((res)=>{
+                callback(null);
+            }, (err)=>{
+                callback(err);
+            });
+            
+        }, function(err){
+            if (err){
+                logger.error('Query exchanges error.', {moduleName, e: err})
+            } else{
+                var end = new Date();
+                logger.info(`${exchanges.length} exchanges were queried for ${end-start} ms.`, {moduleName, start, end, duration: end - start});
+            }
+        });
+        
     } catch(e){
         logger.error('Query exchanges error.', {moduleName, e})
     }
@@ -41,7 +51,6 @@ const syncExchanges = async()=>{
 
 const _syncExchange = async (exchange, createdAt)=>{
     createdAt = createdAt || new Date().getTime();
-    console.log(createdAt);
     for (let symbol of exchange.symbols){
         await orderbookPlugin.syncItem(exchange, symbol, createdAt);
         await new Promise (resolve => setTimeout (resolve, _delay)); //rate limit to not be banned;
@@ -58,7 +67,7 @@ const getSettings = ()=>{
     }
 }
 
-const start = async()=>{
+const start = ()=>{
     try{
         if (!_isRunning){
             _isRunning = true;

@@ -37,7 +37,7 @@ var arbitrageSchema = new mongoose.Schema({
     },
     createdAt:{
         type: Number,
-        default: new Date.getTime()
+        default: new Date().getTime()
     }
 });
 

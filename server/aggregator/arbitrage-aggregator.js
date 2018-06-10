@@ -36,7 +36,7 @@ const stop = () =>{
 }
 //start arbitrage job
 const _startJob = ()=>{
-    saveArbitrageList();
+    getSaveArbitrages();
     if(_isRunning)
     {
         _timeoutId = setTimeout(_startJob, _interval);
@@ -44,12 +44,12 @@ const _startJob = ()=>{
 }
 
 //Collect and save all arbitrages
-const saveArbitrages = async()=>{
+const getSaveArbitrages = async()=>{
     try{
         logger.info(`${moduleName} - Sync job was started`, {moduleName});
         var start = new Date();
-        cryptos.forEach(crypto =>{
-            volumes.forEach(volume=>{
+        cryptos.forEach(async (crypto) =>{
+            volumes.forEach(async (volume) =>{
                 const arbitrages = await weightedarbitrage.getArbitrageList(crypto, volume);
                 const ArbitragesList = arbitrages.map(item =>{
                     const arbitrageObj = {
@@ -74,4 +74,4 @@ const saveArbitrages = async()=>{
 }
 //Get arbitrages for 1 crypt and amount
 
-module.exports = {start}
+module.exports = {start, getSaveArbitrages}
