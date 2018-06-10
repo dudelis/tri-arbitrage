@@ -42,8 +42,7 @@ const syncExchanges = async()=>{
                 var end = new Date();
                 logger.info(`${exchanges.length} exchanges were queried for ${end-start} ms.`, {moduleName, start, end, duration: end - start});
             }
-        });
-        
+        });        
     } catch(e){
         logger.error('Query exchanges error.', {moduleName, e})
     }

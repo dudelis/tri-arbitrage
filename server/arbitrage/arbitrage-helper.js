@@ -67,12 +67,12 @@ const getArbitrageList = (convertedData)=>{
             convertedData.forEach(biditem =>{
                 if (askitem.exchange.ccxt_id !== biditem.exchange.ccxt_id){
                     const item ={
-                        _askExchange: askitem.exchange._id,
-                        _bidExchange: biditem.exchange._id,
+                        _askexchange: askitem.exchange._id,
+                        _bidexchange: biditem.exchange._id,
                         ask: askitem.ask,
                         bid: biditem. bid,
-                        askSymbol: askitem.symbol,
-                        bidSymbol: biditem.symbol,
+                        asksymbol: askitem.symbol,
+                        bidsymbol: biditem.symbol,
                         value: calculateArbitrage(biditem.bid, askitem.ask),
                         arbitragesymbol: askitem.arbitragesymbol
                     }

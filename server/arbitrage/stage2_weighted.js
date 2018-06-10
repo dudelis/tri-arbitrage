@@ -92,4 +92,4 @@ const _getReducedAskbid = (askbid, convertedAmount)=>{
 }
 
 
-module.exports = {getArbitrageTable,getArbitrageList, getConvertedOrderbook}
+module.exports = {getArbitrageTable, getArbitrageList, getConvertedOrderbook}
