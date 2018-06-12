@@ -16,11 +16,11 @@ export const getConvertedTickers = (crypt)=> {
         })
     }
 }
-export const getWeightedArbitrageTable = (crypt, vol, callback)=> {
+export const getWeightedArbitrageTable = (crypt, vol, timestamp = new Date().getTime(), callback)=> {
     return (dispatch) => {
-        axios.get(`/api/v0/arbitrage/weighted/${crypt}/${vol}`).then((res)=>{
-            const arbitrage = res.data;
-            dispatch({type: 'GET_WEIGHTED_ARBITRAGE',weightedArbitrageTable:arbitrage});
+        axios.get(`/api/v0/arbitrage/weighted-table/${crypt}/${vol}/${timestamp}`).then((res)=>{
+            const weightedtable = res.data.data;
+            dispatch({type: 'GET_WEIGHTED_ARBITRAGETABLE', weightedtable});
             if (callback){
                 callback();
             }

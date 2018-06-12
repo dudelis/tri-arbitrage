@@ -15,6 +15,7 @@ class WeightedArbitrageGrid extends Component {
         this.state ={
             cryptocurrency: 'BTC',
             volume: 10000,
+            timestamp: new Date().getTime(),
             loading: false
         };        
     }
@@ -23,12 +24,13 @@ class WeightedArbitrageGrid extends Component {
         this.refreshGrid();
     };
     handleInputChange(e){
-        this.setState({volume:e.target.value});
-        this.refreshGrid();
+        this.setState({volume:e.target.value}, function(){
+            this.refreshGrid();
+        });
     }
     refreshGrid(){
         this.setState({loading:true});
-        this.props.getWeightedArbitrageTable(this.state.cryptocurrency, this.state.volume, ()=>{this.setState({loading:false})});        
+        this.props.getWeightedArbitrageTable(this.state.cryptocurrency, this.state.volume, this.state.timestamp, ()=>{this.setState({loading:false})});        
     }
     handleKeyPress(e){
         if (e.key ==='Enter'){
@@ -36,7 +38,7 @@ class WeightedArbitrageGrid extends Component {
         }
     }
     rowGetter = (i) => {
-        return this.props.arbitrage.weightedArbitrageTable.rows[i];
+        return this.props.arbitrage.weightedtable.rows[i];
     };
 
     render() {
@@ -49,9 +51,9 @@ class WeightedArbitrageGrid extends Component {
                     />
                 </div>
                 <ReactDataGrid
-                    columns= {this.props.arbitrage.weightedArbitrageTable.columns}
+                    columns= {this.props.arbitrage.weightedtable.columns}
                     rowGetter= {this.rowGetter}
-                    rowsCount={this.props.arbitrage.weightedArbitrageTable.rows.length}
+                    rowsCount={this.props.arbitrage.weightedtable.rows.length}
                     minHeight={800}
                     toolbar={
                         <div style={{width:'30%'}}>
@@ -81,7 +83,7 @@ const mapStateToProps = (state, props) =>({
     arbitrage: state.arbitrage
 });
 const mapDispatchToProps = (dispatch, props) =>({
-    getWeightedArbitrageTable : (crypt, vol, callback) => dispatch(getWeightedArbitrageTable(crypt, vol, callback))
+    getWeightedArbitrageTable : (crypt, vol, timestamp, callback) => dispatch(getWeightedArbitrageTable(crypt, vol, timestamp, callback))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(WeightedArbitrageGrid);

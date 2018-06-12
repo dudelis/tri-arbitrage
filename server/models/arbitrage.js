@@ -44,7 +44,7 @@ var arbitrageSchema = new mongoose.Schema({
     }
 });
 
-arbitrageSchema.statics.getArbitrage = async function(crypto, volume, timestamp = new Date().getTime()){
+arbitrageSchema.statics.getArbitrageList = async function(crypto, volume, timestamp = new Date().getTime()){
     try{
     return this.aggregate([
         {

@@ -8,8 +8,8 @@ const weighted = require('./../../arbitrage/stage2_weighted');
 arbitrageRouter.get('/simple/:crypto', async (req, res)=>{
     try{
         const cc = req.params.crypto;
-        const arbitrageTable = await simple.getArbitrageTable(cc);
-        res.send({arbitrageTable});
+        const data = await simple.getArbitrageTable(cc);
+        res.send({data});
     }catch(e){
         res.status(400).send(e);
     }
@@ -25,37 +25,39 @@ arbitrageRouter.get('/convertedtickers/:crypto', async (req, res)=>{
     }
 });
 // //Weighted Arbitrage
-// arbitrageRouter.get('/weighted/:crypto/:amount', async (req, res)=>{
+arbitrageRouter.get('/weighted/:crypto/:volume/:timestamp', async (req, res)=>{
+    try{
+        const crypt = req.params.crypto;
+        const volume = parseFloat(req.params.volume);
+        const timestamp = parseFloat(req.params.timestamp);
+        const data  = await Arbitrage.getArbitrageList(crypt, volume, timestamp);
+        res.send({data});
+    }catch(e){
+        res.status(400).send(e);
+    }
+});
+arbitrageRouter.get('/weighted-table/:crypto/:volume/:timestamp', async (req, res)=>{
+    try{
+        const crypt = req.params.crypto;
+        const volume = parseFloat(req.params.volume);
+        const timestamp = parseFloat(req.params.timestamp);
+        const data = await weighted.getArbitrageTable(crypt, volume, timestamp);
+        res.send({data});
+    }catch(e){
+        res.status(400).send(e);
+    }
+});
+// arbitrageRouter.get('/weighted-arbitrage/:crypto/:amount', async (req, res)=>{
 //     try{
 //         const crypt = req.params.crypto;
 //         const amount = parseFloat(req.params.amount);
-//         const arbitrageTable = await weighted.getArbitrageTable(crypt, amount);
-//         res.send({arbitrageTable});
+//         const arbitrageList  = await weighted.getArbitrageList(crypt, amount);
+//         res.send({arbitrageList});
 //     }catch(e){
 //         res.status(400).send(e);
 //     }
 // });
-arbitrageRouter.get('/weighted-arbitrage/:crypto/:amount', async (req, res)=>{
-    try{
-        const crypt = req.params.crypto;
-        const amount = parseFloat(req.params.amount);
-        const arbitrageList  = await weighted.getArbitrageList(crypt, amount);
-        res.send({arbitrageList});
-    }catch(e){
-        res.status(400).send(e);
-    }
-});
-arbitrageRouter.get('/weighted/:crypto/:amount/:timestamp', async (req, res)=>{
-    try{
-        const crypt = req.params.crypto;
-        const amount = parseFloat(req.params.amount);
-        const timestamp = parseFloat(req.params.timestamp);
-        const results  = await Arbitrage.getArbitrage(crypt, amount, timestamp);
-        res.send({results});
-    }catch(e){
-        res.status(400).send(e);
-    }
-});
+
 
 arbitrageRouter.get('/convertedorderbook/:crypto/:amount', async (req, res)=>{
     try{

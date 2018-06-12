@@ -1,3 +1,5 @@
+
+const { Arbitrage } = require('./../models/arbitrage');
 const { Orderbook } = require('./../models/orderbook');
 const { Fiat } = require('./../models/fiat');
 const logger = require('../../utils/logger');
@@ -33,13 +35,53 @@ const getConvertedOrderbook = async (base='BTC', amountLimit = 0)=>{
         logger.error(`Error getting the converted orderbooks for ${base}`, {base, e});
     }
 }
-const getArbitrageTable = async (base, amountLimit)=>{
+const getArbitrageTable = async (crypt, volume, timestamp)=>{
     try {
-        const convertedOrderbooks = await getConvertedOrderbook(base, amountLimit);
-        const result = helper.buildArbitrageTable(convertedOrderbooks);
-        return result;
+        const arbitrages = await Arbitrage.getArbitrageList(crypt, volume,timestamp);
+        const exchanges = arbitrages.reduce((accumulator, arbitrage) =>{
+            const found = accumulator.findIndex((item)=>{
+                if (item){
+                    return arbitrage.askexchange.ccxt_id === item.ccxt_id;
+                } else{
+                    return false;
+                }                
+            })
+            if (found === -1){
+                accumulator.push(arbitrage.askexchange);
+            }
+            return accumulator;
+        }, []);
+        exchanges.sort((a,b)=>{
+            if (a.name.toLowerCase() < b.name.toLowerCase()) return -1;
+            if (a.name.toLowerCase() > b.name.toLowerCase()) return 1;
+            return 0;
+        });
+        const columns = exchanges.reduce((accumulator, exchange)=>{
+            accumulator.push({key:exchange.ccxt_id, name:exchange.name });
+            return accumulator;
+        }, [{key: 'name', name: 'Asks   \\   Bids'}]);
+
+        const rows = [];
+        exchanges.forEach((ex_row)=>{
+            const rowObj = {};
+            rowObj['name'] = ex_row.name;
+            exchanges.forEach((ex_col)=>{
+                if (ex_row.ccxt_id === ex_col.ccxt_id){
+                    rowObj[ex_col.ccxt_id] = '-';
+                } else{
+                    const arbitrage = arbitrages.find((element)=>{
+                        return element.askexchange.ccxt_id === ex_row.ccxt_id && element.bidexchange.ccxt_id === ex_col.ccxt_id;
+                    });
+                    if (arbitrage){
+                        rowObj[ex_col.ccxt_id] = helper.roundNumber(arbitrage.value, 2);
+                    }
+                }
+            });
+            rows.push(rowObj);
+        });
+        return {columns, rows};
     } catch(e){
-        logger.error(`Arbitrage Weighted - Error getting the Arbitrage table for ${base}`, {base, e});
+        logger.error(`Arbitrage Weighted - Error getting the Arbitrage table for ${crypt}`, {crypt, e});
     }
 }
 const getArbitrageList = async (base, amountLimit) => {

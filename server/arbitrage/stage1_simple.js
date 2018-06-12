@@ -21,12 +21,12 @@ const getConvertedTickers  = async (base = 'BTC')=>{
                 rate = fiatObj.rate;
             }
             return {
-                tickerTimestamp : ticker.timestamp,
+                timestamp : ticker.timestamp,
+                createdAt: ticker.createdAt,
                 bid: ticker.bid / rate,
                 ask: ticker.ask / rate,
                 symbol: `${base}/${baseFiat}`,
-                exchangeName: ticker.exchange.name,
-                exchangeId: ticker.exchange.ccxt_id
+                exchange: ticker.exchange                
             }
         });
         return  convertedTickers;

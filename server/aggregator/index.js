@@ -11,10 +11,10 @@ const start = () =>{
             cryptoAggregator.start();
             callback();
         },
-        // fiat: function (callback){
-        //     fiatAggregator.start();
-        //     callback();
-        // },
+        fiat: function (callback){
+            fiatAggregator.start();
+            callback();
+        },
         arbitrage: function (callback){
             arbitrageAggregator.start();
             callback();

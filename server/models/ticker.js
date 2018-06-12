@@ -57,6 +57,7 @@ tickerSchema.statics.getArbitrageTickers = async function(base) {
                 _id: "$_exchange",
                 _tickerId: {$last: '$_id'},
                 timestamp: {$last: '$timestamp'},
+                createdAt: {$last: '$createdAt'},
                 bid: {$last: '$bid'},
                 ask: {$last: '$ask'},
                 symbol: {$last: '$symbol'}
