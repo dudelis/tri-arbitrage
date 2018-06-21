@@ -27,7 +27,7 @@ export default (state = defaultState, action) => {
         case 'GET_WEIGHTED_ARBITRAGE_TABLE-DATA':
             const weightedtable = action.weightedtable;
             return {...state, weightedtable}
-        case 'GET_CONVERTED_ORDERBOOK':
+        case 'GET_WEIGHTED_ARBITRAGE_LIST':
             const convertedorderbook = action.convertedorderbook;
             return {...state, convertedorderbook}
         case 'SORT_CONVERTED_TICKERS':

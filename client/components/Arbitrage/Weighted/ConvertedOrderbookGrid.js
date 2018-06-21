@@ -5,7 +5,7 @@ import { Button, InputGroup, InputGroupAddon, Input } from 'reactstrap';
 import moment from 'moment';
 import { ClipLoader } from 'react-spinners';
 
-import { getConvertedOrderbook, sortConvertedOrderbook, sortConvertedTickers } from './../../../actions/arbitrage';
+import { getWeightedArbitrageList, sortConvertedOrderbook, sortConvertedTickers } from './../../../actions/arbitrage';
 import DataGridToolbar from './../../DataGridToolbar/DataGridToolbar';
 
 class ConvertedOrderbookGrid extends Component {
@@ -18,11 +18,15 @@ class ConvertedOrderbookGrid extends Component {
         this.handleKeyPress = this.handleKeyPress.bind(this);
 
         const columns = [
-            { key: 'exchangeName', name: 'Name', sortable: true},
-            { key: 'exchangeId', name: 'CCXT-ID', sortable:true },
-            { key: 'symbol', name: 'Symbol', sortable: true},
-            { key: 'bid', name: 'Bid', sortable: true },
-            { key: 'ask', name: 'Ask', sortable: true },
+            { key: 'askexchange', name: 'AskExchange', sortable: true, formatter: ({value}) => `${value.name} (${value.ccxt_id})` },
+            { key: 'ask', name: 'Ask', sortable: true},
+            { key: 'asksymbol', name: 'Ask Symbol', sortable: true},
+            { key: 'bidexchange', name: 'Bid Exchange', sortable: true, formatter: ({value}) => `${value.name} (${value.ccxt_id})` },
+            { key: 'bid', name: 'Bid', sortable: true},
+            { key: 'bidsymbol', name: 'Bid Symbol', sortable: true},
+            { key: 'value', name: 'Arbitrage Value', sortable:true },
+            { key: 'volume', name: 'Volume', sortable: true},
+            { key: 'crypto', name: 'Crypt', sortable: true },
             { key: 'createdAt', name: 'Timestamp', sortable: true, formatter: ({value}) => moment(value).toISOString(), filterbale: true }
         ];
         this.state ={
@@ -49,8 +53,9 @@ class ConvertedOrderbookGrid extends Component {
         this.props.sortConvertedOrderbook(data);
     };
     handleInputChange(e){
-        this.setState({volume:e.target.value});
-        this.refreshGrid();
+        this.setState({volume:e.target.value}, function(){
+            this.refreshGrid();
+        });
     }
     handleKeyPress(e){
         if (e.key ==='Enter'){
@@ -59,7 +64,7 @@ class ConvertedOrderbookGrid extends Component {
     }
     refreshGrid(){
         this.setState({loading:true});
-        this.props.getConvertedOrderbook(this.state.cryptocurrency, this.state.volume, ()=>{this.setState({loading:false})});
+        this.props.getWeightedArbitrageList(this.state.cryptocurrency, this.state.volume, undefined, ()=>{this.setState({loading:false})});
     }
     rowGetter = (i) => {
         return this.props.arbitrage.convertedorderbook[i];
@@ -107,7 +112,7 @@ const mapStateToProps = (state, props) =>({
     arbitrage: state.arbitrage
 });
 const mapDispatchToProps = (dispatch, props) =>({
-    getConvertedOrderbook : (crypt, vol, callback) => dispatch(getConvertedOrderbook(crypt, vol, callback)),
+    getWeightedArbitrageList : (crypt, vol, timestamp, callback) => dispatch(getWeightedArbitrageList(crypt, vol, timestamp, callback)),
     sortConvertedOrderbook: (data) => dispatch(sortConvertedOrderbook(data)),
 });
 

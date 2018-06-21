@@ -28,11 +28,11 @@ export const getWeightedArbitrageTable = (crypt, vol, timestamp = new Date().get
     }
 }
 
-export const getConvertedOrderbook = (crypt, vol, timestamp = new Date().getTime(), callback)=> {
+export const getWeightedArbitrageList = (crypt, vol, timestamp = new Date().getTime(), callback)=> {
     return (dispatch) => {
         axios.get(`/api/v0/arbitrage/weighted/list/${crypt}/${vol}/${timestamp}`).then((res)=>{
             const convertedorderbook = res.data.data;
-            dispatch({type: 'GET_CONVERTED_ORDERBOOK', convertedorderbook});
+            dispatch({type: 'GET_WEIGHTED_ARBITRAGE_LIST', convertedorderbook});
             if (callback){
                 callback();
             }

@@ -292,14 +292,25 @@
                 "ask":{
                     "type":"number"
                 },
+                "askexchange":{
+                    "type": "object",
+                    "$ref": "#/definitions/Exchange"
+                },
                 "asksymbol":{
                     "type":"string"
                 },
                 "bid":{
                     "type":"number"
                 },
+                "bidexchange":{
+                    "type": "object",
+                    "$ref": "#/definitions/Exchange"
+                },
                 "bidsymbol":{
                     "type":"string"
+                },
+                "createdAt":{
+                    "type":"integer"   
                 },
                 "value":{
                     "type":"number"
@@ -309,15 +320,7 @@
                 },
                 "crypto":{
                     "type":"string"
-                },
-                "askexchange":{
-                    "type": "object",
-                    "$ref": "#/definitions/Exchange"
-                },
-                "bidexchange":{
-                    "type": "object",
-                    "$ref": "#/definitions/Exchange"
-                }
+                }                
             }
         }
     }
