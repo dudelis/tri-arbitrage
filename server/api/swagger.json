@@ -13,12 +13,13 @@
     "basePath": "/api/v0",
     "tags": [
         {
-            "name": "Tri-arbitrage",
-            "description": "API for arbitrage application"
+            "name": "Arbitrage",
+            "description": "API for getting arbitrage data"
         }
     ],
     "schemes": [
-        "http"
+        "http",
+        "https"
     ],
     "consumes": [
         "application/json"

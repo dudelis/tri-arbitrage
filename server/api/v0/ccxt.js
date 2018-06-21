@@ -1,8 +1,6 @@
 const ccxt = require('ccxt');
 const router = require('express').Router();
 
-
-
 router.get('/exchanges', async (req, res)=>{
     try{
         const exchanges = ccxt.exchanges;

@@ -1,26 +1,26 @@
 import axios from 'axios';
 
-export const getArbitrageTable = (crypt)=> {
+export const getSimpleArbitrageTableData = (crypt)=> {
     return (dispatch) => {
-        axios.get(`/api/v0/arbitrage/simple/${crypt}`).then((res)=>{
+        axios.get(`/api/v0/arbitrage/simple/table-data/${crypt}`).then((res)=>{
             const arbitrage = res.data;
-            dispatch({type: 'GET_SIMPLE_ARBITRAGE', arbitrage});            
+            dispatch({type: 'GET_SIMPLE_ARBITRAGE_TABLE-DATA', arbitrage});            
         })
     }
 }
-export const getConvertedTickers = (crypt)=> {
+export const getSimpleArbitrageList = (crypt)=> {
     return (dispatch) => {
-        axios.get(`/api/v0/arbitrage/convertedtickers/${crypt}`).then((res)=>{
+        axios.get(`/api/v0/arbitrage/simple/list/${crypt}`).then((res)=>{
             const convertedtickers = res.data.data;
-            dispatch({type: 'GET_CONVERTED_TICKERS', convertedtickers});            
+            dispatch({type: 'GET_SIMPLE_ARBITRAGE_LIST', convertedtickers});            
         })
     }
 }
 export const getWeightedArbitrageTable = (crypt, vol, timestamp = new Date().getTime(), callback)=> {
     return (dispatch) => {
-        axios.get(`/api/v0/arbitrage/weighted-table/${crypt}/${vol}/${timestamp}`).then((res)=>{
+        axios.get(`/api/v0/arbitrage/weighted/table-data/${crypt}/${vol}/${timestamp}`).then((res)=>{
             const weightedtable = res.data.data;
-            dispatch({type: 'GET_WEIGHTED_ARBITRAGETABLE', weightedtable});
+            dispatch({type: 'GET_WEIGHTED_ARBITRAGE_TABLE-DATA', weightedtable});
             if (callback){
                 callback();
             }
@@ -28,9 +28,9 @@ export const getWeightedArbitrageTable = (crypt, vol, timestamp = new Date().get
     }
 }
 
-export const getConvertedOrderbook = (crypt, vol, callback)=> {
+export const getConvertedOrderbook = (crypt, vol, timestamp = new Date().getTime(), callback)=> {
     return (dispatch) => {
-        axios.get(`/api/v0/arbitrage/convertedorderbook/${crypt}/${vol}`).then((res)=>{
+        axios.get(`/api/v0/arbitrage/weighted/list/${crypt}/${vol}/${timestamp}`).then((res)=>{
             const convertedorderbook = res.data.data;
             dispatch({type: 'GET_CONVERTED_ORDERBOOK', convertedorderbook});
             if (callback){

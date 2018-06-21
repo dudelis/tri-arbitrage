@@ -4,7 +4,7 @@ import ReactDataGrid from 'react-data-grid';
 import { Button } from 'reactstrap';
 import moment from 'moment';
 
-import { getConvertedTickers, sortConvertedTickers } from '../../actions/arbitrage';
+import { getSimpleArbitrageList, sortConvertedTickers } from '../../actions/arbitrage';
 import DataGridToolbar from './../DataGridToolbar/DataGridToolbar';
 
 class ConvertedTickersGrid extends Component {
@@ -16,12 +16,11 @@ class ConvertedTickersGrid extends Component {
         this.handleGridSort = this.handleGridSort.bind(this);
 
         const columns = [
-            { key: 'exchangeName', name: 'Name', sortable: true},
-            { key: 'exchangeId', name: 'CCXT-ID', sortable:true },
+            { key: 'exchange', name: 'Exchange', sortable: true, formatter: ({value}) => `${value.name} (${value.ccxt_id})`},
             { key: 'symbol', name: 'Symbol', sortable: true},
             { key: 'bid', name: 'Bid', sortable: true },
             { key: 'ask', name: 'Ask', sortable: true },
-            { key: 'tickerTimestamp', name: 'Timestamp', sortable: true, formatter: ({value}) => moment(value).toISOString(), filterbale: true }
+            { key: 'createdAt', name: 'Timestamp', sortable: true, formatter: ({value}) => moment(value).toISOString(), filterbale: true }
         ];
         this.state ={
             cryptocurrency: 'BTC',
@@ -31,7 +30,7 @@ class ConvertedTickersGrid extends Component {
     }       
       
     componentWillMount(){
-        this.props.getConvertedTickers(this.state.cryptocurrency);
+        this.props.getSimpleArbitrageList(this.state.cryptocurrency);
     };
     handleGridSort = (sortColumn, sortDirection) => {
         const comparer = (a, b) => {
@@ -45,7 +44,7 @@ class ConvertedTickersGrid extends Component {
         this.props.sortConvertedTickers(data);
     };
     refreshGrid(){
-        this.props.getConvertedTickers(this.state.cryptocurrency);
+        this.props.getSimpleArbitrageList(this.state.cryptocurrency);
     }
     rowGetter = (i) => {
         return this.props.arbitrage.convertedtickers[i];
@@ -71,7 +70,7 @@ const mapStateToProps = (state, props) =>({
     arbitrage: state.arbitrage
 });
 const mapDispatchToProps = (dispatch, props) =>({
-    getConvertedTickers : (crypt) => dispatch(getConvertedTickers(crypt)),
+    getSimpleArbitrageList : (crypt) => dispatch(getSimpleArbitrageList(crypt)),
     sortConvertedTickers: (data) => dispatch(sortConvertedTickers(data)),
 });
 

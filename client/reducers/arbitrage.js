@@ -18,13 +18,13 @@ const defaultState = {
 };
 export default (state = defaultState, action) => {
     switch (action.type){
-        case 'GET_SIMPLE_ARBITRAGE':
+        case 'GET_SIMPLE_ARBITRAGE_TABLE-DATA':
             const arbitrageTable = action.arbitrage.data;
             return {...state, arbitrageTable}
-        case 'GET_CONVERTED_TICKERS':
+        case 'GET_SIMPLE_ARBITRAGE_LIST':
             const convertedtickers = action.convertedtickers;
             return {...state, convertedtickers}
-        case 'GET_WEIGHTED_ARBITRAGETABLE':
+        case 'GET_WEIGHTED_ARBITRAGE_TABLE-DATA':
             const weightedtable = action.weightedtable;
             return {...state, weightedtable}
         case 'GET_CONVERTED_ORDERBOOK':

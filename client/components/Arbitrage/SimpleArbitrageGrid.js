@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import ReactDataGrid from 'react-data-grid';
 import { Button } from 'reactstrap';
 
-import { getArbitrageTable } from '../../actions/arbitrage';
+import { getSimpleArbitrageTableData } from '../../actions/arbitrage';
 import DataGridToolbar from './../DataGridToolbar/DataGridToolbar';
 
 class SimpleArbitrageGrid extends Component {
@@ -16,10 +16,10 @@ class SimpleArbitrageGrid extends Component {
     }       
       
     componentWillMount(){
-        this.props.getArbitrageTable(this.state.cryptocurrency);
+        this.props.getSimpleArbitrageTableData(this.state.cryptocurrency);
     };
     refreshGrid(){
-        this.props.getArbitrageTable(this.state.cryptocurrency);
+        this.props.getSimpleArbitrageTableData(this.state.cryptocurrency);
     }
     rowGetter = (i) => {
         return this.props.arbitrage.arbitrageTable.rows[i];
@@ -44,7 +44,7 @@ const mapStateToProps = (state, props) =>({
     arbitrage: state.arbitrage
 });
 const mapDispatchToProps = (dispatch, props) =>({
-    getArbitrageTable : (crypt) => dispatch(getArbitrageTable(crypt))
+    getSimpleArbitrageTableData : (crypt) => dispatch(getSimpleArbitrageTableData(crypt))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(SimpleArbitrageGrid);
