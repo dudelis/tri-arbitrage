@@ -52,6 +52,7 @@
     "redux": "^3.7.2",
     "redux-thunk": "^2.2.0",
     "simple-line-icons": "^2.4.1",
+    "swagger-ui-express": "^3.0.10",
     "winston": "^2.4.0",
     "winston-daily-rotate-file": "^1.7.2",
     "winston-mongodb": "3.0.2"

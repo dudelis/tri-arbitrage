@@ -65,9 +65,9 @@ arbitrageSchema.statics.getArbitrageList = async function(crypto, volume, timest
                 _askexchange: {$last: "$_askexchange"},
                 _bidexchange: {$last: "$_bidexchange"},
                 ask: {$last: "$ask"},
-                askSymbol: {$last: "$askSsmbol"},
+                asksymbol: {$last: "$asksymbol"},
                 bid : {$last: "$bid"},
-                bidSymbol: {$last: "$bidsymbol"},
+                bidsymbol: {$last: "$bidsymbol"},
                 value: {$last: "$value"},
                 volume: {$last: "$volume"},
                 crypto: {$last: "$crypto"}

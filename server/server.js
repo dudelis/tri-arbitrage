@@ -2,6 +2,8 @@ const path = require('path');
 const express = require('express');
 const app = require('express')();
 const bodyParser = require('body-parser');
+const swaggerUi = require('swagger-ui-express');
+const swaggerDocument = require('./api/swagger.json');
 
 const logger = require('../utils/logger');
 const {mongoose} = require('./db/mongoose');
@@ -12,6 +14,8 @@ var start = function(){
     //app.use(logger);
     app.use(bodyParser.urlencoded({ extended: true }));
     app.use(bodyParser.json());
+    app.use('/apidocs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+    
     //API routes
     app.use('/api', api_router);
      

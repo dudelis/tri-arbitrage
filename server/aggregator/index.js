@@ -7,18 +7,18 @@ const logger = require('../../utils/logger');
 
 const start = () =>{
     async.parallel({
-        crypt: function (callback){
-            cryptoAggregator.start();
-            callback();
-        },
-        fiat: function (callback){
-            fiatAggregator.start();
-            callback();
-        },
-        arbitrage: function (callback){
-            arbitrageAggregator.start();
-            callback();
-        }
+        // crypt: function (callback){
+        //     cryptoAggregator.start();
+        //     callback();
+        // },
+        // fiat: function (callback){
+        //     fiatAggregator.start();
+        //     callback();
+        // },
+        // arbitrage: function (callback){
+        //     arbitrageAggregator.start();
+        //     callback();
+        // }
     }, 
     function(err, results){
         if (err){

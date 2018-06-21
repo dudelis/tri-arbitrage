@@ -1,0 +1,323 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "version": "1.0.0",
+        "title": "Tri-Arbitrage API",
+        "description": "API for arbitrage application",
+        "license": {
+            "name": "MIT",
+            "url": "https://opensource.org/licenses/MIT"
+        }
+    },
+    "host": "localhost:3000",
+    "basePath": "/api/v0",
+    "tags": [
+        {
+            "name": "Tri-arbitrage",
+            "description": "API for arbitrage application"
+        }
+    ],
+    "schemes": [
+        "http"
+    ],
+    "consumes": [
+        "application/json"
+    ],
+    "produces": [
+        "application/json"
+    ],
+    "paths": {
+        "/arbitrage/simple/list/{crypto}": {
+            "parameters": [
+                {
+                    "name": "crypto",
+                    "in": "path",
+                    "required": true,
+                    "description": "Cryptocurrency code",
+                    "type": "string"
+                }
+            ],
+            "get": {
+                "tags": [
+                    "Arbitrage"
+                ],
+                "summary": "Get a list of converted tickers",
+                "responses": {
+                    "200": {
+                        "description": "List of converted tickers",
+                        "schema": {
+                            "$ref": "#/definitions/SimpleListBase"
+                        }
+                    }
+                }
+            }
+        },
+        "/arbitrage/simple/table-data/{crypto}": {
+            "parameters": [
+                {
+                    "name": "crypto",
+                    "in": "path",
+                    "required": true,
+                    "description": "Cryptocurrency code",
+                    "type": "string"
+                }
+            ],
+            "get": {
+                "tags": [
+                    "Arbitrage"
+                ],
+                "summary": "Get definition and data for simple  arbitrage table",
+                "responses": {
+                    "200": {
+                        "description": "Table definition and data is returned",
+                        "schema": {
+                            "$ref": "#/definitions/ArbitrageTableBase"
+                        }
+                    }
+                }
+            }
+        },
+        "/arbitrage/weighted/list/{crypto}/{volume}/{timestamp}": {
+            "parameters": [
+                {
+                    "name": "crypto",
+                    "in": "path",
+                    "required": true,
+                    "description": "Cryptocurrency code",
+                    "type": "string"
+                },
+                {
+                    "name": "volume",
+                    "in": "path",
+                    "required": true,
+                    "description": "Volume of arbitrage: 10000/25000/50000",
+                    "type": "integer"
+                },
+                {
+                    "name": "timestamp",
+                    "in": "path",
+                    "required": false,
+                    "description": "The date on which the arbitrage should be calculated",
+                    "type": "integer"
+                }
+            ],
+            "get": {
+                "tags": [
+                    "Arbitrage"
+                ],
+                "summary": "Gets a list of items from arbitrage table",
+                "responses": {
+                    "200": {
+                        "description": "A list of arbitrages",
+                        "schema": {
+                            "$ref": "#/definitions/WeightedListBase"
+                        }
+                    }
+                }
+            }
+        },
+        "/arbitrage/weighted/table-data/{crypto}/{volume}/{timestamp}": {
+            "parameters": [
+                {
+                    "name": "crypto",
+                    "in": "path",
+                    "required": true,
+                    "description": "Cryptocurrency code",
+                    "type": "string"
+                },
+                {
+                    "name": "volume",
+                    "in": "path",
+                    "required": true,
+                    "description": "Volume of arbitrage: 10000/25000/50000",
+                    "type": "integer"
+                },
+                {
+                    "name": "timestamp",
+                    "in": "path",
+                    "required": false,
+                    "description": "The date on which the arbitrage should be calculated",
+                    "type": "integer"
+                }
+            ],
+            "get": {
+                "tags": [
+                    "Arbitrage"
+                ],
+                "summary": "Gets definition and data for weighted arbitrage table",
+                "responses": {
+                    "200": {
+                        "description": "Table definition and data is returned",
+                        "schema": {
+                            "$ref": "#/definitions/ArbitrageTableBase"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "ArbitrageTableBase": {
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items":{
+                        "$ref": "#/definitions/ArbitrageTableData"
+                    }
+                }
+            }
+        },
+        "ArbitrageTableColumn":{
+            "tags":[
+                "Arbitrage"
+            ],
+            "properties":{
+                "key":{
+                    "type":"string"
+                },
+                "name":{
+                    "type":"string"
+                }
+            }
+        },
+        "ArbitrageTableData": {
+            "properties":{
+                "columns":{
+                    "type":"array",
+                    "items":{
+                        "$ref": "#/definitions/ArbitrageTableColumn"
+                    }
+                },
+                "rows":{
+                    "type":"array",
+                    "items":{
+                        "$ref": "#/definitions/ArbitrageTableRow"
+                    }
+                }
+            }
+        },
+        "ArbitrageTableRow":{
+            "type":"object"
+        },
+        "Exchange":{
+            "type":"object",
+            "properties":{
+                "_id":{
+                    "type":"string"
+                },
+                "includeIntoQuery":{
+                    "type":"boolean"
+                },
+                "symbols":{
+                    "type":"array",
+                    "items":{
+                        "type":"string"
+                    }
+                },
+                "createdAt":{
+                    "type":"number"
+                },
+                "name":{
+                    "type":"string"
+                },
+                "ccxt_id":{
+                    "type":"string"
+                },
+                "localCurrency":{
+                    "type":"string"
+                },
+                "__v":{
+                    "type":"integer"
+                }
+            }
+        },
+        "SimpleListBase": {
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items":{
+                        "$ref": "#/definitions/SimpleListData"
+                    }
+                }
+            }
+        },
+        "SimpleListData": {
+            "type":"object",
+            "properties":{
+                "timestamp":{
+                    "type":"integer"
+                },
+                "createdAt":{
+                    "type":"integer"
+                },
+                "bid":{
+                    "type":"number"
+                },
+                "ask":{
+                    "type":"number"
+                },
+                "symbol":{
+                    "type":"string"
+                },
+                "exchange":{
+                    "type": "object",
+                    "$ref": "#/definitions/Exchange"
+                }
+
+            }
+        },
+        "WeightedListBase": {
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items":{
+                        "$ref": "#/definitions/WeightedListData"
+                    }
+                }
+            }
+        },
+        "WeightedListData": {
+            "type":"object",
+            "properties":{
+                "_id":{
+                    "type":"object"
+                },
+                "_askexchange":{
+                    "type":"string"
+                },
+                "_bidexchange":{
+                    "type":"string"
+                },
+                "ask":{
+                    "type":"number"
+                },
+                "asksymbol":{
+                    "type":"string"
+                },
+                "bid":{
+                    "type":"number"
+                },
+                "bidsymbol":{
+                    "type":"string"
+                },
+                "value":{
+                    "type":"number"
+                },
+                "volume":{
+                    "type":"integer"
+                },
+                "crypto":{
+                    "type":"string"
+                },
+                "askexchange":{
+                    "type": "object",
+                    "$ref": "#/definitions/Exchange"
+                },
+                "bidexchange":{
+                    "type": "object",
+                    "$ref": "#/definitions/Exchange"
+                }
+            }
+        }
+    }
+}
