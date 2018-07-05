@@ -1,31 +1,29 @@
-
 const async = require('async');
+const CronJob = require('cron').CronJob;
 
 const logger = require('./../../utils/logger');
 const {Exchange} = require('../models/exchange');
-const exchangeInitializer = require('./exchange-initializer');
 const orderbookPlugin = require('./orderbook-plugin');
 const tickerPlugin = require('./ticker-plugin');
 
 const moduleName = 'crypto-aggregator';
-let _isRunning = false;
-let _interval = process.env.QUERY_INTERVAL;
-const _minInterval = 60000; //Minimun interval is 1 min sec.
-let _timeoutId;
 let _delay = 2000; //2000 ms to not be banned by exchanges
 
-const _startJob = ()=>{
-    syncExchanges();
-    if(_isRunning)
-    {
-        _timeoutId = setTimeout(_startJob, _interval);
+
+const _job = new CronJob({
+    cronTime: '00 05,15,27,35,45,55 * * * *',
+    onTick: ()=>{
+        syncExchanges();
+    },
+    onComplete: function(){
+        logger.info(`Sync job was stopped`, {moduleName});
     }
-}
+})
+
 const syncExchanges = async()=>{
     try{
         logger.info(`${moduleName} - Sync job was started`, {moduleName});
         var start = new Date();
-        const createdAt = new Date().getTime();
         const exchanges = await Exchange.find({includeIntoQuery: true});
         
         async.forEachOf(exchanges, function(value, key, callback) {
@@ -59,29 +57,15 @@ const _syncExchange = async (exchange, createdAt)=>{
         }
     }
 }
-const getSettings = ()=>{
-    return {
-        isrunning: _isRunning,
-        syncinterval: _interval
-    }
-}
-
 const start = ()=>{
     try{
-        if (!_isRunning){
-            _isRunning = true;
-            _startJob();
-        }
+        _job.start();
     } catch(e){
         logger.error('Sync job cannot be started!', {moduleName, e});
     }
 }
 const stop = () =>{
-    if (_timeoutId){
-        clearTimeout(_timeoutId);
-        logger.info(`Sync job was stopped`, {moduleName});
-    }
-    _isRunning = false;
+    _job.stop();
 }
 const syncExchange = async (id)=>{
     try{
@@ -103,16 +87,4 @@ const syncExchange = async (id)=>{
     }
 }
 
-
-const setInterval = (num) =>{
-    if (num > _minInterval){
-        _interval = num;
-        logger.info(`${moduleName} query interval was changed to ${_interval}`, {moduleName});
-    } else{
-        _interval = process.env.QUERY_INTERVAL;
-        logger.info(`${moduleName} query interval cannot be changed to  ${num}. It cannot be less than ${_minInterval}`, {moduleName});
-    }
-    return _interval;
-}
-
-module.exports = {start, stop, setInterval, syncExchanges, syncExchange, getSettings}
+module.exports = {start, stop, syncExchanges, syncExchange}

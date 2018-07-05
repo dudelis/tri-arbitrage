@@ -1,46 +1,27 @@
-const _ = require('lodash');
 const axios = require('axios');
+const CronJob = require('cron').CronJob;
 
 const logger = require('../../utils/logger');
 const {Exchange} = require('../models/exchange');
 const {Fiat} = require('../models/fiat');
-const exchangeInitializer = require('./exchange-initializer');
 
 const moduleName = 'fiat-aggregator';
-let _isRunning = true;
-let _interval = process.env.FIAT_QUERY_INTERVAL;
 const _baseUrl = process.env.FIAT_QUERY_BASEURL;
 const _base = process.env.FIAT_BASE_CURRENCY;
-let _timeoutId;
 
 
-const setInterval = (num) =>{
-    if (num > 10000){
-        _interval = num;
-    } else{
-        _interval = process.env.FIAT_QUERY_INTERVAL;
-    }
-    logger.debug(`${moduleName} query interval was changed to ${_interval}`, {moduleName});
-}
-const start = async()=>{
-    try{
-        _isRunning = true;
-        _startJob();
-        logger.info(`${moduleName} - Sync job was started!`, {moduleName});
-    } catch(e){
-        logger.error('Sync job cannot be started!', {moduleName, e});
-    }
-}
-const stop = () =>{
-    if (_timeoutId){
-        clearTimeout(_timeoutId);
+const _job = new CronJob({
+    cronTime: '00 05,15,27,35,45,55 * * * *',
+    onTick: ()=>{
+        _syncItems();
+    },
+    onComplete: function(){
         logger.info(`Sync job was stopped`, {moduleName});
     }
-    _isRunning = false;
-}
-
-const syncItems = async()=>{
+});
+const _syncItems = async()=>{
     try{
+        logger.info(`${moduleName} - Sync job was started!`, {moduleName});
         let start = new Date();
         const createdAt = new Date().getTime();
         const exchanges = await Exchange.find({includeIntoQuery: true});
@@ -71,12 +52,15 @@ const syncItems = async()=>{
     }
 }
 
-const _startJob = async()=>{
-    syncItems();
-    if(_isRunning)
-    {
-        _timerId = setTimeout(_startJob, _interval);
+const start = ()=>{
+    try{
+        _job.start();
+    } catch(e){
+        logger.error('Sync job cannot be started!', {moduleName, e});
     }
-};
+}
+const stop = () =>{
+    _job.stop();
+}
 
-module.exports = {start, stop, setInterval}
+module.exports = {start, stop}

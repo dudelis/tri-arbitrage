@@ -3,7 +3,7 @@ import axios from 'axios';
 export const getExchanges = ()=> {
     return (dispatch) => {
         axios.get(`/api/v0/ccxt/exchanges`).then((res)=>{
-            const exchanges = res.data.exchanges;
+            const exchanges = res.data;
             dispatch({type: 'GET_CCXT_EXCHANGES', exchanges});            
         })
     }
@@ -20,7 +20,7 @@ export const getExchange = (exchangeid)=> {
 export const getMarkets = (exchangeid) =>{
     return (dispatch) => {
         axios.get(`/api/v0/ccxt/exchange/${exchangeid}/markets`).then((res)=>{
-            const markets = res.data.markets;
+            const markets = res.data;
             dispatch({type: 'GET_CCXT_MARKETS', markets});            
         })
     }

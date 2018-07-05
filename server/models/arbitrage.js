@@ -42,69 +42,75 @@ var arbitrageSchema = new mongoose.Schema({
         type: Number,
         default: new Date().getTime()
     },
-    intervalstamp:{
+    weekday:{
         type:Number
+    },
+    hours:{
+        type: Number
+    },
+    minutes:{
+        type: Number
     }
 });
 
+// Gets Arbitrage for a certain point in time for all exchanges
 arbitrageSchema.statics.getArbitrageList = async function(crypto, volume, timestamp = new Date().getTime()){
     try{
-    return this.aggregate([
-        {
-            $match:{
-                $and:[
-                    {crypto: crypto},
-                    {volume: volume},
-                    {createdAt: {$lte: timestamp}}
-                ]
+        return this.aggregate([
+            {
+                $match:{
+                    $and:[
+                        {crypto: crypto},
+                        {volume: volume},
+                        {createdAt: {$lte: timestamp}}
+                    ]
+                },
             },
-        },
-        {
-            $sort:{_id: 1}
-        },
-        {
-            $group:{
-                _id: { askexchange: "$_askexchange", bidexchange:"$_bidexchange"},
-                _askexchange: {$last: "$_askexchange"},
-                _bidexchange: {$last: "$_bidexchange"},
-                ask: {$last: "$ask"},
-                asksymbol: {$last: "$asksymbol"},
-                bid : {$last: "$bid"},
-                bidsymbol: {$last: "$bidsymbol"},
-                value: {$last: "$value"},
-                volume: {$last: "$volume"},
-                crypto: {$last: "$crypto"},
-                createdAt: {$last: "$createdAt"},
-            }
-        },
-        {
-            $lookup:{
-                from: "exchanges",
-                localField: "_askexchange",
-                foreignField: "_id",
-                as: "askexchange"
+            {
+                $sort:{_id: 1}
             },
-        },
-        {
-            $lookup:{
-                from: "exchanges",
-                localField: "_bidexchange",
-                foreignField: "_id",
-                as: "bidexchange"
+            {
+                $group:{
+                    _id: { askexchange: "$_askexchange", bidexchange:"$_bidexchange"},
+                    _askexchange: {$last: "$_askexchange"},
+                    _bidexchange: {$last: "$_bidexchange"},
+                    ask: {$last: "$ask"},
+                    asksymbol: {$last: "$asksymbol"},
+                    bid : {$last: "$bid"},
+                    bidsymbol: {$last: "$bidsymbol"},
+                    value: {$last: "$value"},
+                    volume: {$last: "$volume"},
+                    crypto: {$last: "$crypto"},
+                    createdAt: {$last: "$createdAt"},
+                }
+            },
+            {
+                $lookup:{
+                    from: "exchanges",
+                    localField: "_askexchange",
+                    foreignField: "_id",
+                    as: "askexchange"
+                },
+            },
+            {
+                $lookup:{
+                    from: "exchanges",
+                    localField: "_bidexchange",
+                    foreignField: "_id",
+                    as: "bidexchange"
+                }
+            },
+            {
+                $addFields:{
+                    askexchange: {$arrayElemAt: ['$askexchange', 0]},
+                    bidexchange: {$arrayElemAt: ['$bidexchange', 0]},
+                }
             }
-        },
-        {
-            $addFields:{
-                askexchange: {$arrayElemAt: ['$askexchange', 0]},
-                bidexchange: {$arrayElemAt: ['$bidexchange', 0]},
-            }
-        }
 
-    ]);
+        ]);
     }catch(e){
         console.log(e);
     }
-
 }
 
 const Arbitrage = mongoose.model('Arbitrage', arbitrageSchema);

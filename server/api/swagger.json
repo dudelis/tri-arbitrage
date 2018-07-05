@@ -15,6 +15,10 @@
         {
             "name": "Arbitrage",
             "description": "API for getting arbitrage data"
+        },
+        {
+            "name": "CCXT",
+            "description": "API for getting ccxt module data"
         }
     ],
     "schemes": [
@@ -155,7 +159,121 @@
                     }
                 }
             }
+        },
+        "/ccxt/exchanges": {
+            "get": {
+                "tags": [
+                    "CCXT"
+                ],
+                "summary": "Get a list of available exchanges",
+                "responses": {
+                    "200": {
+                        "description": "List of available exchanges",
+                        "schema": {
+                            "type":"array",
+                            "items": {
+                                "type":"string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/ccxt/exchange/{id}": {
+            "parameters": [
+                {
+                    "name": "id",
+                    "in": "path",
+                    "required": true,
+                    "description": "CCXT exchange name",
+                    "type": "string"
+                }
+            ],
+            "get": {
+                "tags": [
+                    "CCXT"
+                ],
+                "summary": "Gets information about the ccxt exchnage",
+                "responses": {
+                    "200": {
+                        "description": "CCXT exchange object is returned",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "404": {
+                        "description": "CCXT exchange is not found"
+                    }
+                }
+            }
+        },
+        "/ccxt/exchange/{id}/markets": {
+            "parameters": [
+                {
+                    "name": "id",
+                    "in": "path",
+                    "required": true,
+                    "description": "CCXT exchange name",
+                    "type": "string"
+                }
+            ],
+            "get": {
+                "tags": [
+                    "CCXT"
+                ],
+                "summary": "Gets all markets of the selected exchange",
+                "responses": {
+                    "200": {
+                        "description": "Markets of the exchange are returned",
+                        "schema": {
+                            "type":"array",
+                            "items": {
+                                "type":"string"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "CCXT exchange is not found"
+                    }
+                }
+            }
+        },
+        "/ccxt/exchange/{id}/market/{marketid}": {
+            "parameters": [
+                {
+                    "name": "id",
+                    "in": "path",
+                    "required": true,
+                    "description": "CCXT exchange name",
+                    "type": "string"
+                },
+                {
+                    "name": "marketid",
+                    "in": "path",
+                    "required": true,
+                    "description": "Exchange market - base currency / quote currency",
+                    "type": "string"
+                }
+            ],
+            "get": {
+                "tags": [
+                    "CCXT"
+                ],
+                "summary": "Gets a market object for a certain exchange",
+                "responses": {
+                    "200": {
+                        "description": "Markets of the exchange are returned",
+                        "schema": {
+                            "type":"object"
+                        }
+                    },
+                    "404": {
+                        "description": "CCXT exchange or market is not found"
+                    }
+                }
+            }
         }
+
     },
     "definitions": {
         "ArbitrageTableBase": {

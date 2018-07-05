@@ -1,4 +1,3 @@
-const async = require('async');
 const CronJob = require('cron').CronJob;
 
 const logger = require('./../../utils/logger');
@@ -6,20 +5,12 @@ const {Arbitrage} = require('../models/arbitrage');
 const weightedarbitrage = require('./../arbitrage/stage2_weighted');
 
 //configuration values
-const baseFiat = 'USD';
 const cryptos = ['BTC'];
 const volumes = [10000, 25000, 50000];
-
-//system values
 const moduleName = 'arbitrage-aggregator';
-let _isRunning = false;
-let _interval = process.env.QUERY_INTERVAL;
-const _minInterval = 600000; //Minimun interval is 1 min.
-let _timeoutId;
-
 
 const job = new CronJob({
-    cronTime: '00 00,18,20,30,40,50 * * * *',
+    cronTime: '00 05,18,20,30,40,54 * * * *',
     onTick: ()=>{
         getSaveArbitrages();
     },
@@ -27,7 +18,6 @@ const job = new CronJob({
         logger.info(`Sync job was stopped`, {moduleName});
     }
 })
-
 
 //start arbitrage aggregation
 const start = async()=>{
@@ -41,20 +31,14 @@ const start = async()=>{
 const stop = () =>{
     job.stop();
 }
-//start arbitrage job
-const _startJob = ()=>{
-    getSaveArbitrages();
-    if(_isRunning)
-    {
-        _timeoutId = setTimeout(_startJob, _interval);
-    }
-}
-
 //Collect and save all arbitrages
 const getSaveArbitrages = async()=>{
     try{
         logger.info(`${moduleName} - Sync job was started`, {moduleName});
         var start = new Date();
+        const weekday = start.getDay();
+        const hours = start.getHours();
+        const minutes = start.getMinutes();
         await _asyncForEach(cryptos, async function(crypto) {
             await _asyncForEach(volumes, async function(volume){
                 const arbitrages = await weightedarbitrage.getArbitrageList(crypto, volume);
@@ -62,7 +46,10 @@ const getSaveArbitrages = async()=>{
                     const arbitrageObj = {
                         ...item,
                         volume,
-                        crypto
+                        crypto,
+                        weekday,
+                        hours,
+                        minutes
                     }
                     return new Arbitrage(arbitrageObj);
                 });
@@ -88,4 +75,4 @@ const _asyncForEach = async (array, callback) => {
   }
 //Get arbitrages for 1 crypt and amount
 
-module.exports = {start, getSaveArbitrages}
+module.exports = {start, stop, getSaveArbitrages}
