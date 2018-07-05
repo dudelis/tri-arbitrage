@@ -3,6 +3,10 @@ import { connect } from 'react-redux';
 import ReactDataGrid from 'react-data-grid';
 import { Button, Input, InputGroup, InputGroupAddon, Col } from 'reactstrap';
 import { ClipLoader } from 'react-spinners';
+import DatePicker from 'react-datepicker';
+import moment from 'moment';
+
+import 'react-datepicker/dist/react-datepicker.css';
 
 import { getWeightedArbitrageTable } from './../../../actions/arbitrage';
 
@@ -12,10 +16,11 @@ class WeightedArbitrageGrid extends Component {
         this.refreshGrid = this.refreshGrid.bind(this);
         this.handleInputChange = this.handleInputChange.bind(this);
         this.handleKeyPress = this.handleKeyPress.bind(this);
+        this.handleDatepickerChange = this.handleDatepickerChange.bind(this);
         this.state ={
             cryptocurrency: 'BTC',
             volume: 10000,
-            timestamp: new Date().getTime(),
+            timestamp: moment(),
             loading: false
         };        
     }
@@ -27,10 +32,15 @@ class WeightedArbitrageGrid extends Component {
         this.setState({volume:e.target.value}, function(){
             this.refreshGrid();
         });
+    };
+    handleDatepickerChange(date){
+        this.setState({timestamp:date}, function(){
+            this.refreshGrid();
+        });
     }
     refreshGrid(){
         this.setState({loading:true});
-        this.props.getWeightedArbitrageTable(this.state.cryptocurrency, this.state.volume, this.state.timestamp, ()=>{this.setState({loading:false})});        
+        this.props.getWeightedArbitrageTable(this.state.cryptocurrency, this.state.volume, this.state.timestamp.valueOf(), ()=>{this.setState({loading:false})});        
     }
     handleKeyPress(e){
         if (e.key ==='Enter'){
@@ -56,7 +66,7 @@ class WeightedArbitrageGrid extends Component {
                     rowsCount={this.props.arbitrage.weightedtable.rows.length}
                     minHeight={800}
                     toolbar={
-                        <div style={{width:'30%'}}>
+                        <div style={{width:'50%'}}>
                             <InputGroup>
                                 <InputGroupAddon addonType="prepend">Arbitrage amount:</InputGroupAddon>
                                     <Input
@@ -69,6 +79,16 @@ class WeightedArbitrageGrid extends Component {
                                         <option>50000</option>
                                     </Input>
                                 <InputGroupAddon addonType="append">USD</InputGroupAddon>
+                                <DatePicker
+                                    selected={this.state.timestamp}
+                                    onChange={this.handleDatepickerChange}
+                                    showTimeSelect
+                                    timeFormat="HH:mm"
+                                    timeIntervals={10}
+                                    timeCaption="time"
+                                    dateFormat="LLL"
+                                    style={{width:'200px'}}
+                                />
                             </InputGroup>
                         </div>
                     }

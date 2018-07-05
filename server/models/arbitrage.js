@@ -41,6 +41,9 @@ var arbitrageSchema = new mongoose.Schema({
     createdAt:{
         type: Number,
         default: new Date().getTime()
+    },
+    intervalstamp:{
+        type:Number
     }
 });
 

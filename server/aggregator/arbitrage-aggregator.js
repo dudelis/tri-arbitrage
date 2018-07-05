@@ -1,4 +1,5 @@
 const async = require('async');
+const CronJob = require('cron').CronJob;
 
 const logger = require('./../../utils/logger');
 const {Arbitrage} = require('../models/arbitrage');
@@ -17,24 +18,28 @@ const _minInterval = 600000; //Minimun interval is 1 min.
 let _timeoutId;
 
 
+const job = new CronJob({
+    cronTime: '00 00,18,20,30,40,50 * * * *',
+    onTick: ()=>{
+        getSaveArbitrages();
+    },
+    onComplete: function(){
+        logger.info(`Sync job was stopped`, {moduleName});
+    }
+})
+
+
 //start arbitrage aggregation
 const start = async()=>{
     try{
-        if (!_isRunning){
-            _isRunning = true;
-            _startJob();
-        }
+        job.start();
     } catch(e){
         logger.error('Sync job cannot be started!', {moduleName, e});
     }
 }
 //stop arbitrage aggregation
 const stop = () =>{
-    if (_timeoutId){
-        clearTimeout(_timeoutId);
-        logger.info(`Sync job was stopped`, {moduleName});
-    }
-    _isRunning = false;
+    job.stop();
 }
 //start arbitrage job
 const _startJob = ()=>{

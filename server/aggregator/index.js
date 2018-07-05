@@ -15,10 +15,10 @@ const start = () =>{
         //     fiatAggregator.start();
         //     callback();
         // },
-        // arbitrage: function (callback){
-        //     arbitrageAggregator.start();
-        //     callback();
-        // }
+        arbitrage: function (callback){
+            arbitrageAggregator.start();
+            callback();
+        }
     }, 
     function(err, results){
         if (err){
